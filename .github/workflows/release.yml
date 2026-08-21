@@ -1,0 +1,70 @@
+name: Release package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
+        with:
+          node-version: "24"
+          cache: "npm"
+      - name: Validate release tag
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: bash scripts/assert-semver-tag.sh "${RELEASE_TAG}"
+      - name: Validate release notes
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: bash scripts/assert-release-notes.sh "${RELEASE_TAG}"
+      - name: Build release package
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: bash scripts/build-release-asset.sh "${RELEASE_TAG}"
+      - name: Upload release package
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: gh release upload "${RELEASE_TAG}" build/*.zip --clobber
+      - name: Update CHANGELOG.md
+        env:
+          # GITHUB_TOKEN writes the branch and the CHANGELOG.md commit, which
+          # GitHub only auto-signs for its own token, not a personal PAT - a
+          # required_signatures ruleset would reject the commit otherwise.
+          GITHUB_TOKEN: ${{ github.token }}
+          # A pull request opened with the workflow's own token never triggers
+          # `on: pull_request`, so CI would not run and Kodiak could not merge.
+          # Without REPO_PAT the PR still opens, but its required checks never
+          # report, so it needs a ruleset bypass to merge.
+          CHANGELOG_PR_TOKEN: ${{ secrets.REPO_PAT }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: bash scripts/update-changelog.sh "${RELEASE_TAG}"
+
+  publish:
+    needs: package
+    runs-on: ubuntu-latest
+    environment: packagist
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Download release package
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: gh release download "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" --pattern '*.zip' --dir build
+      - name: Upload package artifact to Private Packagist
+        uses: packagist/artifact-publish-github-action@696f0133c3532a967b0926ab13c4704d97e24098 # v1
+        with:
+          package_name: itinerisltd/wpc-builder
+          organization_url_name: itinerisltd
+          artifact: ${{ github.workspace }}/build/wpc-builder-${{ github.event.release.tag_name }}.zip

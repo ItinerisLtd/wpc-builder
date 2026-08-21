@@ -1,0 +1,18 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - src/Config.php
+        - src/Customizer.php
+        - src/Controls
+        - src/Enums
+        - src/Fields
+        - src/Panels
+        - src/Registrars
+        - src/Sections
+        - src/Support
+        - examples
+    bootstrapFiles:
+        - vendor/php-stubs/wordpress-stubs/wordpress-stubs.php

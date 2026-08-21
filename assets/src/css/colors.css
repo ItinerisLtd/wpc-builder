@@ -1,0 +1,14 @@
+:root {
+  --wpc-color-primary: #2271b1;
+  --wpc-color-border: #c3c4c7;
+  --wpc-color-text-secondary: #646970;
+  --wpc-color-text-muted: #50575e;
+  --wpc-color-icon: #8c8f94;
+  --wpc-color-danger: #b32d2e;
+  --wpc-color-surface: #fff;
+  --wpc-color-surface-muted: #f6f7f7;
+
+  /* Also used for ColorPalette's swatch border and Repeater's drag-image
+   * shadow, the same subtle-depth visual weight in both places. */
+  --wpc-shadow-color: rgb(0 0 0 / 15%);
+}

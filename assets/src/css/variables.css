@@ -1,0 +1,10 @@
+:root {
+  --wpc-space-xs: 4px;
+  --wpc-space-sm: 6px;
+  --wpc-space-md: 8px;
+  --wpc-space-lg: 12px;
+  --wpc-radius-sm: 3px;
+  --wpc-radius-md: 4px;
+  --wpc-transition-fast: 150ms ease-in-out;
+  --wpc-transition-base: 200ms ease;
+}

@@ -1,0 +1,20 @@
+/* @define wpc-builder-slider */
+
+.wpc-builder-slider {
+  display: flex;
+  align-items: center;
+  gap: var(--wpc-space-md);
+}
+
+.wpc-builder-slider__range {
+  width: 100%;
+  flex: 1 1 auto;
+}
+
+.wpc-builder-slider__value {
+  flex: 0 0 auto;
+  min-width: 4em;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: var(--wpc-color-text-muted);
+}

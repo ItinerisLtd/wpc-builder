@@ -1,0 +1,11 @@
+/vendor/
+/wordpress/
+/node_modules/
+/build/
+.phpunit.result.cache
+/dist/js/
+/dist/css/
+/uploads/
+/artifacts/
+/test-results/
+/playwright-report/

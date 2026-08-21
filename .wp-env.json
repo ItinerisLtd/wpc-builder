@@ -1,0 +1,9 @@
+{
+  "core": null,
+  "phpVersion": "8.4",
+  "plugins": [],
+  "mappings": {
+    "wp-content/mu-plugins/wpc-builder": ".",
+    "wp-content/mu-plugins/wpc-builder-e2e-loader.php": "./tests/E2E/loader.php"
+  }
+}

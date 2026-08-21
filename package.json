@@ -1,0 +1,38 @@
+{
+  "name": "wpc-builder",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "^24.13.0 || >=26.0.0"
+  },
+  "scripts": {
+    "build": "node scripts/vite-build-all.mjs",
+    "test": "vitest run",
+    "test:e2e": "bash scripts/test-e2e.sh",
+    "lint:css": "stylelint 'assets/src/css/**/*.css'",
+    "lint:css:fix": "stylelint 'assets/src/css/**/*.css' --fix",
+    "lint:js": "eslint 'assets/src/js/**/*.js'",
+    "lint:js:fix": "eslint 'assets/src/js/**/*.js' --fix",
+    "lint": "npm run lint:css & p1=$!; npm run lint:js & p2=$!; wait $p1; s1=$?; wait $p2; s2=$?; [ $s1 -eq 0 ] && [ $s2 -eq 0 ]",
+    "lint:fix": "npm run lint:css:fix & p1=$!; npm run lint:js:fix & p2=$!; wait $p1; s1=$?; wait $p2; s2=$?; [ $s1 -eq 0 ] && [ $s2 -eq 0 ]"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.62.1",
+    "@stylistic/eslint-plugin": "^5.10.0",
+    "@stylistic/stylelint-config": "^5.0.0",
+    "@wordpress/e2e-test-utils-playwright": "^1.53.0",
+    "@wordpress/env": "^11.13.0",
+    "autoprefixer": "^10.5.4",
+    "eslint": "^10.8.1",
+    "globals": "^17.11.0",
+    "jsdom": "^30.0.1",
+    "postcss-nesting": "^14.0.1",
+    "stylelint": "^17.14.1",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-selector-bem-pattern": "^5.0.0",
+    "underscore": "^1.13.8",
+    "vite": "^8.2.1",
+    "vitest": "^4.1.10"
+  }
+}

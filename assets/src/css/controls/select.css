@@ -1,0 +1,14 @@
+/* @define wpc-builder-select */
+
+.wpc-builder-select--multiple {
+  width: 100%;
+  min-height: 120px;
+}
+
+/* wpc-builder-select enhanced UI, match other Customizer input backgrounds */
+
+.wpc-builder-select__enhanced-ui .components-form-token-field__input-container,
+.wpc-builder-select__enhanced-ui .components-combobox-control__suggestions-container,
+.wpc-builder-select__enhanced-ui input[type="text"] {
+  background-color: var(--wpc-color-surface);
+}

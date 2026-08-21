@@ -1,0 +1,35 @@
+/* @define wpc-builder-radio-buttonset */
+
+.wpc-builder-radio-buttonset {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wpc-space-xs);
+}
+
+.wpc-builder-radio-buttonset__input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.wpc-builder-radio-buttonset__label {
+  display: inline-block;
+  padding: var(--wpc-space-xs) 10px;
+  border: 1px solid var(--wpc-color-border);
+  border-radius: var(--wpc-radius-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.wpc-builder-radio-buttonset__input:checked + .wpc-builder-radio-buttonset__label {
+  background: var(--wpc-color-primary);
+  border-color: var(--wpc-color-primary);
+  color: var(--wpc-color-surface);
+}
+
+.wpc-builder-radio-buttonset__input:focus-visible + .wpc-builder-radio-buttonset__label {
+  outline: 2px solid var(--wpc-color-primary);
+  outline-offset: 2px;
+}

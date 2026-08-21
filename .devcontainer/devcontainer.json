@@ -1,0 +1,6 @@
+{
+  "name": "wpc-builder",
+  "dockerComposeFile": ["docker-compose.yml"],
+  "service": "app",
+  "workspaceFolder": "/app"
+}

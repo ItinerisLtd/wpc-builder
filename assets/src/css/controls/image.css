@@ -1,0 +1,25 @@
+/* @define wpc-builder-image */
+
+.wpc-builder-image__preview {
+  margin-bottom: var(--wpc-space-md);
+}
+
+.wpc-builder-image__thumbnail {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+.wpc-builder-image__placeholder {
+  display: block;
+  padding: var(--wpc-space-lg);
+  border: 1px dashed var(--wpc-color-border);
+  color: var(--wpc-color-text-secondary);
+  text-align: center;
+}
+
+.wpc-builder-image__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--wpc-space-md);
+}

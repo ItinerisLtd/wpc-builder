@@ -1,0 +1,19 @@
+/* @define wpc-builder-url-field */
+
+.wpc-builder-url-field__input-wrap {
+  position: relative;
+}
+
+.wpc-builder-url-field__icon {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: var(--wpc-color-text-secondary);
+  pointer-events: none;
+}
+
+.wpc-builder-url-field__input-wrap input[type="url"].wpc-builder-url-field__input {
+  padding-left: 30px;
+}

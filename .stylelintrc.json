@@ -1,0 +1,15 @@
+{
+  "extends": ["stylelint-config-standard", "@stylistic/stylelint-config"],
+  "plugins": ["stylelint-selector-bem-pattern"],
+  "rules": {
+    "selector-class-pattern": null,
+    "plugin/selector-bem-pattern": {
+      "componentName": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "componentSelectors": "^\\.{componentName}(?:__[a-z0-9]+(?:-[a-z0-9]+)*)?(?:(?:_|--)[a-z0-9]+(?:-[a-z0-9]+)*){0,2}(?:\\[.+\\])?$",
+      "ignoreSelectors": [
+        "^(input|select|textarea|img|label)(\\[.+\\])?(\\..+)?$",
+        "^\\.(components-[a-z_-]+|customize-control-title|wp-editor-container)$"
+      ]
+    }
+  }
+}

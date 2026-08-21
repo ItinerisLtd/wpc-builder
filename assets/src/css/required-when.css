@@ -1,0 +1,8 @@
+/* @define wpc-builder-required */
+
+@import url("colors.css");
+
+.wpc-builder-required .customize-control-title::after {
+  content: " *";
+  color: var(--wpc-color-danger);
+}

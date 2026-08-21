@@ -1,0 +1,14 @@
+/* @define wpc-builder-multicheck */
+
+.wpc-builder-multicheck {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wpc-builder-multicheck__label {
+  display: flex;
+  align-items: center;
+  gap: var(--wpc-space-sm);
+  padding: 2px 0;
+}

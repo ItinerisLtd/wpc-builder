@@ -1,0 +1,33 @@
+/* @define wpc-builder-color-palette */
+
+.wpc-builder-color-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--wpc-space-sm);
+}
+
+.wpc-builder-color-palette__swatch {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--wpc-radius-md);
+  border: 1px solid var(--wpc-shadow-color);
+  cursor: pointer;
+}
+
+.wpc-builder-color-palette__input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/*
+ * :has(...) hides everything after the first `:` from
+ * plugin/selector-bem-pattern, so this selector is unvalidated.
+ */
+.wpc-builder-color-palette__swatch:has(.wpc-builder-color-palette__input:checked) {
+  outline: 2px solid var(--wpc-color-primary);
+  outline-offset: 2px;
+}

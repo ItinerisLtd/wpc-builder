@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<ruleset name="wpc-builder">
+    <file>src/Config.php</file>
+    <file>src/Customizer.php</file>
+    <file>src/Controls</file>
+    <file>src/Enums</file>
+    <file>src/Fields</file>
+    <file>src/Panels</file>
+    <file>src/Registrars</file>
+    <file>src/Sections</file>
+    <file>src/Support</file>
+    <file>examples</file>
+    <file>tests</file>
+    <arg name="extensions" value="php"/>
+    <arg value="sp"/>
+    <rule ref="Itineris">
+        <!--
+            This package's field/control args are genuinely heterogeneous
+            (array<string, mixed>): they carry whatever mix of strings,
+            callables, arrays, ints and bools WordPress' Customizer API
+            accepts. Disallowing "mixed" in docblocks would force either
+            inaccurate narrower types or per-usage suppression comments
+            repeated across every field type in this package.
+        -->
+        <exclude name="SlevomatCodingStandard.TypeHints.DisallowMixedTypeHint"/>
+    </rule>
+    <!--
+        This package's collection properties/parameters (e.g. `array<int,
+        AbstractSection>`) are only ever expressed via PHPDoc, since PHP has
+        no generics. Without this, every `use` statement that exists solely
+        to name a docblock's array member type is flagged as unused.
+    -->
+    <rule ref="SlevomatCodingStandard.Namespaces.UnusedUses">
+        <properties>
+            <property name="searchAnnotations" value="true"/>
+        </properties>
+    </rule>
+    <!--
+        The test suite runs under Pest + Brain Monkey with no WordPress
+        runtime, so WP_Filesystem and wp_delete_file() don't exist there.
+        Tests that build temp-dir fixtures have to use PHP's native
+        mkdir()/unlink()/rmdir().
+    -->
+    <rule ref="WordPress.WP.AlternativeFunctions">
+        <exclude-pattern>tests/*</exclude-pattern>
+    </rule>
+</ruleset>

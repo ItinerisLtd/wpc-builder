@@ -1,0 +1,9 @@
+/* @define wpc-builder-editor */
+
+.wpc-builder-editor {
+  width: 100%;
+}
+
+.wpc-builder-editor .wp-editor-container textarea {
+  width: 100%;
+}

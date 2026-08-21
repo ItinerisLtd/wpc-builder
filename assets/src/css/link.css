@@ -1,0 +1,45 @@
+/* @define wpc-builder-link */
+
+@import url("colors.css");
+@import url("variables.css");
+
+.wpc-builder-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wpc-space-md);
+  margin-bottom: var(--wpc-space-md);
+  padding: var(--wpc-space-md);
+  border: 1px solid var(--wpc-color-border);
+  border-radius: var(--wpc-radius-md);
+  background: var(--wpc-color-surface-muted);
+}
+
+.wpc-builder-link__row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--wpc-space-xs);
+}
+
+.wpc-builder-link__row--checkbox {
+  flex-direction: row;
+  align-items: center;
+}
+
+.wpc-builder-link__label {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--wpc-color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.wpc-builder-link__row--checkbox .wpc-builder-link__label {
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.wpc-builder-link__text,
+.wpc-builder-link__url {
+  width: 100%;
+  background: var(--wpc-color-surface);
+}
