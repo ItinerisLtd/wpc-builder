@@ -63,5 +63,11 @@ export async function saveCustomizer (page) {
  * @param {string} id
  */
 export async function settingValue (page, id) {
-  return page.evaluate((settingId) => window.wp.customize(settingId)(), id)
+  return page.evaluate((settingId) => {
+    if (!window.wp.customize.has(settingId)) {
+      throw new Error(`No Customizer setting registered for id "${settingId}"`)
+    }
+
+    return window.wp.customize(settingId)()
+  }, id)
 }

@@ -24,7 +24,11 @@ npx wp-env destroy --force || true
 wp_env_cache_dir="$(node scripts/wp-env-cache-dir.mjs)"
 
 if [ -d "${wp_env_cache_dir}" ]; then
-  docker run --rm -v "${wp_env_cache_dir}:/target" alpine sh -c 'rm -rf /target/*'
+  # The three globs together match everything including dotfiles/dotdirs
+  # (e.g. a cloned WordPress checkout's own .git): `/target/*` alone
+  # would skip them, and the checkout is what wp-env's next clone
+  # actually needs an empty directory for.
+  docker run --rm -v "${wp_env_cache_dir}:/target" alpine sh -c 'rm -rf /target/* /target/.[!.]* /target/..?*'
 fi
 
 npx wp-env start
