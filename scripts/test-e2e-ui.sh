@@ -10,6 +10,6 @@ npm run build
 npx wp-env start
 
 # See test-e2e.sh for why this reset is needed on local re-runs.
-npx wp-env run tests-cli wp theme mod remove --all
+npx wp-env run cli wp theme mod remove --all
 
 npx playwright test --ui

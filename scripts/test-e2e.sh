@@ -13,6 +13,6 @@ npx wp-env start
 # value looks unchanged to the Customizer's dirty-check on this run, and
 # Save never enables. CI always starts from a fresh install, so this only
 # bites local re-runs; resetting here makes local runs behave the same way.
-npx wp-env run tests-cli wp theme mod remove --all
+npx wp-env run cli wp theme mod remove --all
 
 npx playwright test
