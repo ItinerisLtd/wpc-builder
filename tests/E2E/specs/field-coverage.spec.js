@@ -134,7 +134,14 @@ test.describe('Field coverage', () => {
 
   test('Select (core components enhanced UI) saves the chosen option', async ({ page }) => {
     const control = page.locator('#customize-control-select_field')
-    await control.locator('.wpc-builder-select__enhanced-ui input[role="combobox"]').click()
+    const combobox = control.locator('.wpc-builder-select__enhanced-ui input[role="combobox"]')
+    await combobox.click()
+    // Types to filter down to one match before clicking: the unfiltered
+    // list re-renders (e.g. on a debounced initial load), which detaches
+    // and remounts its option nodes mid-click and makes an unfiltered
+    // click flaky. ComboboxControl's own placeholder ("Start typing to
+    // search options") is this component's intended usage anyway.
+    await combobox.fill('B')
     await page.getByRole('option', { name: 'B', exact: true }).click()
     await saveCustomizer(page)
 
@@ -143,12 +150,13 @@ test.describe('Field coverage', () => {
 
   test('PostSelect (queried choices) saves a real post id', async ({ page }) => {
     const control = page.locator('#customize-control-post_select_field')
-    await control.locator('.wpc-builder-select__enhanced-ui input[role="combobox"]').click()
-    // Named, not .first(): the deactivated native <select>'s own options
-    // briefly remain in the DOM (and briefly visible, before
-    // deactivateNativeSelect() runs) matching the same "option" role, and
-    // are earlier in document order than the popover's real listbox
-    // options. Targeting a known default-seeded post title skips that race.
+    const combobox = control.locator('.wpc-builder-select__enhanced-ui input[role="combobox"]')
+    await combobox.click()
+    // Filters to the known default-seeded post title first (see Select's
+    // test above for why: an unfiltered list is flaky to click). Named,
+    // not .first(): the deactivated native <select>'s own options briefly
+    // remain in the DOM matching the same "option" role.
+    await combobox.fill('Hello world')
     await page.getByRole('option', { name: /Hello world/i }).click()
     await saveCustomizer(page)
 
