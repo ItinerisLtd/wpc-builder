@@ -1,16 +1,5 @@
 import { test, expect } from '@wordpress/e2e-test-utils-playwright'
-import { openCustomizer } from '../helpers/customizer.js'
-
-/**
- * Reads the live wp.customize() setting value, not the DOM input's
- * displayed value, matching what actually gets sent on save.
- *
- * @param {import('@playwright/test').Page} page
- * @param {string} id
- */
-async function settingValue (page, id) {
-  return page.evaluate((settingId) => window.wp.customize(settingId)(), id)
-}
+import { openCustomizer, settingValue } from '../helpers/customizer.js'
 
 test.describe('Color field', () => {
   test('accepts a stored rgba() until the picker changes it, then loses its alpha channel (docs/known-limitations.md)', async ({ page, admin }) => {

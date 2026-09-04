@@ -13,8 +13,12 @@ declare(strict_types=1);
 namespace Itineris\WpcBuilder\Tests\E2E;
 
 use Itineris\WpcBuilder\Customizer;
+use Itineris\WpcBuilder\Tests\Fixtures\Panels\FooterPanelFixture;
+use Itineris\WpcBuilder\Tests\Fixtures\Sections\CoreSectionFixture;
 use Itineris\WpcBuilder\Tests\Fixtures\Sections\E2eSectionFixture;
+use Itineris\WpcBuilder\Tests\Fixtures\Sections\FieldCoverageSectionFixture;
 use Itineris\WpcBuilder\Tests\Fixtures\Sections\FooterSectionFixture;
+use Itineris\WpcBuilder\Tests\Fixtures\Sections\SectionInPanelFixture;
 
 use function add_action;
 use function esc_html;
@@ -39,7 +43,14 @@ function render_live_message(): string
 
 add_action('customize_register', static function (): void {
     Customizer::make()
-        ->addSections([new FooterSectionFixture(), new E2eSectionFixture()])
+        ->addPanels([new FooterPanelFixture()])
+        ->addSections([
+            new FooterSectionFixture(),
+            new E2eSectionFixture(),
+            new SectionInPanelFixture(),
+            new CoreSectionFixture(),
+            new FieldCoverageSectionFixture(),
+        ])
         ->register();
 });
 
