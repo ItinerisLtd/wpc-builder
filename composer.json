@@ -10,7 +10,7 @@
     "brain/monkey": "^2.6",
     "itinerisltd/itineris-wp-coding-standards": "^2.0",
     "pestphp/pest": "^4.0",
-    "php-stubs/wordpress-stubs": "^6.7",
+    "php-stubs/wordpress-stubs": "^7.0",
     "phpstan/phpstan": "^2.0",
     "roots/wordpress": "^7.1",
     "roots/wordpress-core-installer": "^4.0",
