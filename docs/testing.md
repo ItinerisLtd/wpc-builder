@@ -18,11 +18,11 @@
   assets (control-registration/enqueue regressions a brain/monkey-stubbed
   unit test can't catch).
   Requires Docker and `composer install` to already have run (the mu-plugin
-  loader needs `vendor/autoload.php`). `scripts/test-e2e.sh` resets all
-  theme mods before each run (wp-env's WordPress data otherwise persists
-  across local runs, unlike CI's always-fresh install, so a field already
-  saved to its test target value from a prior local run would look
-  unchanged and never re-trigger a save); `npx wp-env destroy` tears the
-  site down entirely.
+  loader needs `vendor/autoload.php`). `tests/E2E/global-setup.js` resets
+  all theme mods before every run, however Playwright is invoked (wp-env's
+  WordPress data otherwise persists across local runs, unlike CI's
+  always-fresh install, so a field already saved to its test target value
+  from a prior local run would look unchanged and never re-trigger a
+  save); `npx wp-env destroy` tears the site down entirely.
 
 `docker compose -f .devcontainer/docker-compose.yml down` to tear down the local integration containers.

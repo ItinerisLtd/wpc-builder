@@ -37,6 +37,8 @@ use Itineris\WpcBuilder\Sections\AbstractSection;
  */
 final class FieldCoverageSectionFixture extends AbstractSection
 {
+    private const array CHOICES = ['a' => 'A', 'b' => 'B'];
+
     protected string $id = 'field_coverage';
     protected ?string $title = 'Field coverage';
 
@@ -59,7 +61,7 @@ final class FieldCoverageSectionFixture extends AbstractSection
             Link::make('link_field')->setLabel('Link'),
             Multicheck::make('multicheck_field')
                 ->setLabel('Multicheck')
-                ->setChoices(['a' => 'A', 'b' => 'B']),
+                ->setChoices(self::CHOICES),
             Number::make('number_field')
                 ->setLabel('Number')
                 ->setMin(0)
@@ -67,13 +69,13 @@ final class FieldCoverageSectionFixture extends AbstractSection
             PostSelect::make('post_select_field')->setLabel('Post select'),
             Radio::make('radio_field')
                 ->setLabel('Radio')
-                ->setChoices(['a' => 'A', 'b' => 'B']),
+                ->setChoices(self::CHOICES),
             RadioButtonset::make('radio_buttonset_field')
                 ->setLabel('Radio buttonset')
-                ->setChoices(['a' => 'A', 'b' => 'B']),
+                ->setChoices(self::CHOICES),
             Select::make('select_field')
                 ->setLabel('Select')
-                ->setChoices(['a' => 'A', 'b' => 'B']),
+                ->setChoices(self::CHOICES),
             Slider::make('slider_field')->setLabel('Slider'),
             Textarea::make('textarea_field')->setLabel('Textarea'),
             Url::make('url_field')->setLabel('URL'),

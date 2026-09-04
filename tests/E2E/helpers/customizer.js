@@ -54,3 +54,14 @@ export async function saveCustomizer (page) {
   expect(body.success, `save rejected: ${JSON.stringify(body.data)}`).toBe(true)
   await expect(page.locator('#save')).toBeDisabled()
 }
+
+/**
+ * Reads the live wp.customize() setting value, not the DOM input's
+ * displayed value, matching what actually gets sent on save.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} id
+ */
+export async function settingValue (page, id) {
+  return page.evaluate((settingId) => window.wp.customize(settingId)(), id)
+}
