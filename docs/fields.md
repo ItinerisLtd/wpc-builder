@@ -111,9 +111,13 @@ Repeater::make('team_members')
         Url::make('link'),
         Checkbox::make('featured'),
     ])
-    ->setRowLabel(RowLabel::fromField('name'))
+    ->setRowLabel(RowLabel::fromField('name', 'Unnamed member'))
     ->setLimit(4);
 ```
+
+`RowLabel::fromField()`'s second argument is the label shown for a row when `name` is blank, in place
+of the generic `Row 1`, `Row 2`, etc. The row number is always appended, so a blank third row shows
+`Unnamed member 3`.
 
 stores, after sanitizing two submitted rows:
 

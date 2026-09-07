@@ -497,6 +497,30 @@ describe('createRepeaterUi', () => {
     expect(labels).toEqual(['Row 1', 'Row 2'])
   })
 
+  it('appends the row number to a custom row_label.value when the labelled field is blank', () => {
+    const { list } = buildRepeaterFixture({
+      fields: { title: { id: 'title', type: 'text' } },
+      value: [{ title: '' }, { title: 'About' }, { title: '' }],
+      rowLabel: { type: 'field', field: 'title', value: 'Untitled' },
+    })
+
+    const labels = Array.from(list.querySelectorAll('.wpc-builder-repeater__row-label')).map((el) => el.textContent)
+
+    expect(labels).toEqual(['Untitled 1', 'About', 'Untitled 3'])
+  })
+
+  it('appends the row number to a plain text row_label.value on every row', () => {
+    const { list } = buildRepeaterFixture({
+      fields: { title: { id: 'title', type: 'text' } },
+      value: [{ title: 'Home' }, { title: 'About' }],
+      rowLabel: { type: 'text', value: 'Item' },
+    })
+
+    const labels = Array.from(list.querySelectorAll('.wpc-builder-repeater__row-label')).map((el) => el.textContent)
+
+    expect(labels).toEqual(['Item 1', 'Item 2'])
+  })
+
   it('adds a row seeded with each field default on "Add row" click', () => {
     const { list, addButton } = buildRepeaterFixture({
       fields: { title: { id: 'title', type: 'text', default: 'Untitled' } },
