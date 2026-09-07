@@ -18,9 +18,13 @@ final class RowLabel
         return new self('text', $value, '');
     }
 
-    public static function fromField(string $fieldId): self
+    /**
+     * @param string $fieldId       Sub-field id to read the row label from.
+     * @param string $fallbackLabel Shown, with the row number appended, when $fieldId is blank.
+     */
+    public static function fromField(string $fieldId, string $fallbackLabel = ''): self
     {
-        return new self('field', '', $fieldId);
+        return new self('field', $fallbackLabel, $fieldId);
     }
 
     /**

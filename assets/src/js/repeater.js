@@ -143,8 +143,9 @@ function createFieldWrapper (doc, fieldDef, inputElement) {
 }
 
 function rowLabelFor (row, index, rowLabel) {
+  const rowNumber = index + 1
   /* translators: %s: row number. */
-  const fallback = format(translate('Row %s'), index + 1)
+  const fallback = format(translate('Row %s'), rowNumber)
 
   if (!rowLabel) {
     return fallback
@@ -164,7 +165,12 @@ function rowLabelFor (row, index, rowLabel) {
     }
   }
 
-  return rowLabel.value || fallback
+  if (rowLabel.value === undefined || rowLabel.value === null || rowLabel.value === '') {
+    return fallback
+  }
+
+  /* translators: 1: custom row label, 2: row number. */
+  return format(translate('%s %s'), String(rowLabel.value), rowNumber)
 }
 
 export function normaliseImageValue (value) {
