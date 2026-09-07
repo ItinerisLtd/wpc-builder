@@ -2,3 +2,5 @@ changelog:
   exclude:
     authors:
       - github-actions[bot]
+    labels:
+      - changelog
