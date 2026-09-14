@@ -33,7 +33,7 @@
     "stylelint-config-standard": "^40.0.0",
     "stylelint-selector-bem-pattern": "^5.0.0",
     "underscore": "^1.13.8",
-    "vite": "^8.2.1",
+    "vite": "^8.3.0",
     "vitest": "^5.0.0"
   }
 }
