@@ -63,7 +63,7 @@ jobs:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: gh release download "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" --pattern '*.zip' --dir build
       - name: Upload package artifact to Private Packagist
-        uses: packagist/artifact-publish-github-action@696f0133c3532a967b0926ab13c4704d97e24098 # v1
+        uses: packagist/artifact-publish-github-action@187f3c3bdde9cfa570108893f243d515875cc5bb # v1.0.2
         with:
           package_name: itinerisltd/wpc-builder
           organization_url_name: itinerisltd
