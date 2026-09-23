@@ -3,9 +3,9 @@
 ## Out of scope
 
 This package does not implement CSS-generation (`output`/`js_vars`), the
-`Typography`, `Background`, `Responsive`, `Multicolor`, `Tabs`, `Date`,
-`Code`, `Dashicons`, `FontAwesome` field types, an import/export UI, or a
-page builder.
+`Typography`, `Background`, `Responsive`, `Multicolor`, `Date`, `Code`,
+`Dashicons`, `FontAwesome` field types, an import/export UI, or a page
+builder.
 
 ## Known limitations
 

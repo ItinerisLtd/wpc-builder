@@ -1,0 +1,84 @@
+/* @define wpc-builder-tabs */
+
+@import url("colors.css");
+@import url("variables.css");
+
+/**
+ * -12px cancels WP core's 12px .accordion-section-content padding, so
+ * the bar runs edge to edge.
+ */
+.wpc-builder-tabs__menu {
+  display: flex;
+  margin: 0 -12px var(--wpc-space-md);
+  padding: 0;
+  list-style: none;
+  border-bottom: 1px solid var(--wpc-color-border);
+}
+
+.wpc-builder-tabs__menu-item {
+  flex: 1 1 0%;
+  margin: 0;
+}
+
+.wpc-builder-tabs__item {
+  display: block;
+  width: 100%;
+  padding: var(--wpc-space-sm) var(--wpc-space-xs);
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--wpc-color-text-secondary);
+  text-align: center;
+  cursor: pointer;
+  transition: var(--wpc-transition-fast);
+  transition-property: background, color, border-color;
+}
+
+/**
+ * !important: some admin plugins enqueue an unscoped `button:focus`
+ * reset that otherwise wins outright, since nothing here competes
+ * with it.
+ */
+.wpc-builder-tabs__item:focus,
+.wpc-builder-tabs__item:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/**
+ * WP core's own focus ring (see .customize-control-header .choice:focus),
+ * not an offset outline. outline stays transparent rather than none for
+ * Windows High Contrast Mode, which ignores box-shadow.
+ */
+.wpc-builder-tabs__item:focus-visible {
+  box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wpc-color-primary) !important;
+  outline: 1px solid transparent !important;
+}
+
+.wpc-builder-tabs__item:hover,
+.wpc-builder-tabs__item:active {
+  border-bottom-color: var(--wpc-color-primary);
+  color: var(--wpc-color-primary);
+}
+
+.wpc-builder-tabs__item--active {
+  background: var(--wpc-color-primary);
+  border-bottom-color: var(--wpc-color-primary);
+  color: var(--wpc-color-surface);
+}
+
+.wpc-builder-tabs__item--active:hover {
+  background: var(--wpc-color-primary-darker-10);
+  border-bottom-color: var(--wpc-color-primary-darker-10);
+  color: var(--wpc-color-surface);
+}
+
+.wpc-builder-tabs__item--active:active {
+  background: var(--wpc-color-primary-darker-20);
+  border-bottom-color: var(--wpc-color-primary-darker-20);
+  color: var(--wpc-color-surface);
+}
+
+.wpc-builder-tabs__hidden {
+  display: none !important;
+}
