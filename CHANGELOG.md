@@ -6,6 +6,33 @@ version is published. See [docs/releasing.md](docs/releasing.md).
 
 <!-- release-notes:insert-after -->
 
+## [0.3.0] - 2026-09-23
+
+### What's Changed
+* chore(deps-dev): bump @playwright/test from 1.62.1 to 1.63.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/16
+* chore(deps-dev): bump eslint from 10.9.1 to 10.10.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/17
+* chore(deps-dev): bump stylelint from 17.14.1 to 17.15.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/18
+* chore(deps-dev): bump autoprefixer from 10.5.4 to 10.5.5 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/19
+* chore(deps): bump js-yaml by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/20
+* chore(deps-dev): bump @wordpress/env from 11.14.0 to 11.15.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/21
+* chore(deps-dev): bump vite from 8.2.2 to 8.3.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/24
+* chore(deps): bump packagist/artifact-publish-github-action from 1.0.1 to 1.0.2 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/25
+* chore(deps-dev): bump autoprefixer from 10.5.5 to 10.6.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/26
+* chore(deps-dev): bump wp-phpunit/wp-phpunit from 7.1.0 to 7.1.1 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/27
+* chore(deps-dev): bump roots/wordpress from 7.1 to 7.1.1 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/28
+* chore(deps-dev): bump adm-zip from 0.6.0 to 0.6.1 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/29
+* chore(deps-dev): bump phpstan/phpstan from 2.2.9 to 2.2.10 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/30
+* chore(deps-dev): bump autoprefixer from 10.6.0 to 10.6.1 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/33
+* chore(deps-dev): bump vitest from 5.0.0 to 5.0.1 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/31
+* chore(deps-dev): bump jsdom from 30.0.1 to 30.1.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/32
+* chore(deps-dev): bump phpstan/phpstan from 2.2.10 to 2.2.12 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/34
+* chore(deps-dev): bump eslint from 10.10.0 to 10.11.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/35
+* chore(deps-dev): bump roots/wordpress from 7.1.1 to 7.1.2 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/37
+* feat(customizer): add Tabs field/control for grouping a section's fields by @codepuncher in https://github.com/ItinerisLtd/wpc-builder/pull/36
+
+
+**Full Changelog**: https://github.com/ItinerisLtd/wpc-builder/compare/0.2.0...0.3.0
+
 ## [0.2.0] - 2026-09-07
 
 ### What's Changed
