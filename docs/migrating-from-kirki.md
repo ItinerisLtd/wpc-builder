@@ -60,6 +60,15 @@ exactly where Kirki enforces it. An editor who selects more than the cap
 sees the excess dropped on save, the same outcome Kirki's own server-side
 `array_slice` produces.
 
+### Mapping Kirki's section tabs
+
+Kirki's section-level `'tabs' => [$id => ['label' => $label]]` maps onto
+this package's `AbstractSection::tabs()`; a field's `'tab' => 'id'` maps
+onto `->setTab('id')`. A stray `'tab'` key on a field whose section never
+declared a `'tabs'` array was already inert in Kirki and can simply be
+dropped when porting that field. See [tabs.md](tabs.md) for the full API
+and its fail-open rules.
+
 ### The workflow
 
 `examples/Sections/Footer.php` and `examples/Sections/SiteIdentity.php` are

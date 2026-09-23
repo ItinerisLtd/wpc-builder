@@ -120,11 +120,11 @@ core section's id (`title_tagline`). Existing sections are detected and
 
 ## Fields
 
-23 field classes: `Text`, `Textarea`, `Editor`, `Url`, `Link`, `Number`,
+24 field classes: `Text`, `Textarea`, `Editor`, `Url`, `Link`, `Number`,
 `Slider`, `Select`, `PostSelect`, `Radio`, `RadioButtonset`,
 `DropdownPages`, `Multicheck`, `Checkbox`, `CheckboxToggle`,
 `CheckboxSwitch`, `Toggle`, `Image`, `Color`, `ColorPalette`, `Dimensions`,
-`Custom` and `Repeater`.
+`Custom`, `Repeater` and `Tabs`.
 
 Stored value shapes vary per field, so check [fields.md](docs/fields.md)
 before relying on one.

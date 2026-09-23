@@ -32,6 +32,7 @@ const jsEntries = [
   'url-validation',
   'url',
   'link',
+  'tabs',
 ];
 
 const jsConfigs = jsEntries.map((entry, index) => {
@@ -65,6 +66,7 @@ const cssConfig = defineConfig({
         'css/toggle': resolve('assets/src/css/toggle.css'),
         'css/link': resolve('assets/src/css/link.css'),
         'css/required-when': resolve('assets/src/css/required-when.css'),
+        'css/tabs': resolve('assets/src/css/tabs.css'),
       },
       output: {
         assetFileNames: '[name][extname]',

@@ -1,5 +1,8 @@
 :root {
-  --wpc-color-primary: #2271b1;
+  /* Follows the editor's chosen admin colour scheme; hex is the fallback. */
+  --wpc-color-primary: var(--wp-admin-theme-color, #2271b1);
+  --wpc-color-primary-darker-10: var(--wp-admin-theme-color-darker-10, #135e96);
+  --wpc-color-primary-darker-20: var(--wp-admin-theme-color-darker-20, #0a4b78);
   --wpc-color-border: #c3c4c7;
   --wpc-color-text-secondary: #646970;
   --wpc-color-text-muted: #50575e;

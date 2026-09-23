@@ -82,6 +82,8 @@ abstract class AbstractField
     /** @var array<string, string|int|null> */
     protected array $inputAttrs = [];
 
+    protected ?string $tab = null;
+
     final public function __construct(public readonly string $id)
     {
     }
@@ -278,6 +280,18 @@ abstract class AbstractField
         $this->inputAttrs = $attrs;
 
         return $this;
+    }
+
+    final public function setTab(string $tabId): static
+    {
+        $this->tab = $tabId;
+
+        return $this;
+    }
+
+    final public function tab(): ?string
+    {
+        return $this->tab;
     }
 
     /**
