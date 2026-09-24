@@ -11,6 +11,7 @@ use Itineris\WpcBuilder\Fields\AbstractField;
 use function array_filter;
 use function crc32;
 use function dechex;
+use function html_entity_decode;
 use function in_array;
 use function is_scalar;
 use function preg_match;
@@ -21,6 +22,8 @@ use function strtolower;
 use function trim;
 use function ucfirst;
 use function wp_allowed_protocols;
+use const ENT_HTML5;
+use const ENT_QUOTES;
 
 function label_from_id(string $id): string
 {
@@ -140,10 +143,13 @@ function format_setting_id(string $settingId, Config $config): string
 }
 
 /**
- * Rejects only whitespace and schemes outside wp_allowed_protocols().
- * Deliberately permissive: relative paths, fragments, protocol-relative,
- * tel: and IDN URLs are all real stored shapes, and one rejected value
- * makes WordPress abort the entire changeset save.
+ * Rejects C0 control characters, `"`/`<`/`>`, and schemes outside
+ * wp_allowed_protocols(). HTML entities (HTML5 named references
+ * included, e.g. `&colon;`) are decoded before these checks, since a
+ * browser decodes them the same way once the stored value reaches HTML.
+ * Otherwise deliberately permissive: relative paths, fragments,
+ * protocol-relative, tel: and IDN URLs are all real stored shapes, and
+ * one rejected value makes WordPress abort the entire changeset save.
  * Mirrored client-side in assets/src/js/url-validation.js, keep in sync.
  */
 function is_valid_or_empty_url(mixed $value): bool
@@ -162,11 +168,33 @@ function is_valid_or_empty_url(mixed $value): bool
         return true;
     }
 
-    if (1 === preg_match('/\s/', $url)) {
+    /**
+     * PHP's html_entity_decode() ignores a reference with no trailing
+     * ";" (e.g. `&#58` or `&lt`), but a browser's HTML parser still
+     * decodes some of these. Numeric references never need the ";" in a
+     * browser; `amp`/`lt`/`gt`/`quot` are the only named references
+     * that don't, a fixed legacy exception carried over from HTML4 (see
+     * the "missing semicolon" entries in the WHATWG named-character-
+     * reference table). Insert the missing ";" for exactly these before
+     * decoding, so this check and a browser agree on the result. A
+     * longer real entity that happens to start with one of these names
+     * (e.g. `&gtrsim;`) is a false positive this deliberately accepts:
+     * that shape essentially never occurs in a real URL, and silently
+     * missing a scheme-hiding bypass here is the worse failure mode.
+     */
+    $withTerminators = preg_replace(
+        '/&((?:amp|AMP|lt|LT|gt|GT|quot|QUOT)|#(?:[0-9]++|[xX][0-9a-fA-F]++))(?!;)/',
+        '&$1;',
+        $url,
+    ) ?? $url;
+
+    $decoded = html_entity_decode($withTerminators, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+    if (1 === preg_match('/[\x00-\x20"<>]/', $decoded)) {
         return false;
     }
 
-    if (1 !== preg_match('/^([a-z][a-z0-9+.\-]*):/i', $url, $matches)) {
+    if (1 !== preg_match('/^([a-z][a-z0-9+.\-]*):/i', $decoded, $matches)) {
         return true;
     }
 

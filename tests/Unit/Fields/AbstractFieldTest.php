@@ -102,6 +102,14 @@ it('lets a per-field sanitize callback override the default', function (): void 
     expect($args['sanitize_callback'])->toBe('absint');
 });
 
+it('passes a non-callable sanitize_callback override through unchanged, rather than dropping it', function (): void {
+    $args = Text::make('brand_phone')
+        ->setSanitizeCallback('this_function_does_not_exist')
+        ->buildSettingArgs(new Config());
+
+    expect($args['sanitize_callback'])->toBe('this_function_does_not_exist');
+});
+
 it('routes an array-form active_callback into visibleWhen', function (): void {
     $conditions = [
         ['setting' => 'scripts_google_fonts_enable', 'operator' => '==', 'value' => true],

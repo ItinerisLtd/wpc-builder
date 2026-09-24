@@ -15,10 +15,8 @@ use WP_Error;
 use function __;
 use function add_action;
 use function array_keys;
-use function call_user_func;
 use function esc_url_raw;
 use function filter_var;
-use function html_entity_decode;
 use function in_array;
 use function is_array;
 use function is_string;
@@ -281,7 +279,10 @@ final class Repeater extends AbstractField
      * An explicit per-sub-field `sanitize_callback` wins outright;
      * otherwise the value is coerced by the sub-field's `type` string.
      * Any type not listed below, including every `wpc-builder-*` control
-     * type, is left untouched via the `default => $value` arm.
+     * type without its own case, falls back to the sub-field's own
+     * `AbstractField::resolvedSanitizeCallback()` via the `default` arm,
+     * so a new field type is never stored raw just because this dispatch
+     * table doesn't know about it yet.
      *
      * Notable cases:
      * - 'color' reuses `Fields\Color::sanitizeAlpha()`, safe because
@@ -298,15 +299,15 @@ final class Repeater extends AbstractField
      *   judgment call, documented on its own further down.
      * - 'email'/'tel' have no matching Field class in this package
      *   today (unreachable via this package's own API), but are kept
-     *   for fidelity: a `default => $value` catch-all can't
-     *   distinguish "untouched on purpose" from "forgotten".
+     *   for fidelity: a `default` catch-all can't distinguish
+     *   "explicitly handled" from "forgotten".
      */
     private static function sanitizeSubfieldValue(AbstractField $field, mixed $value): mixed
     {
         $callback = $field->sanitizeCallback();
 
         if (null !== $callback && is_callable($callback)) {
-            return call_user_func($callback, $value);
+            return $callback($value);
         }
 
         return match ($field->controlType()) {
@@ -326,9 +327,20 @@ final class Repeater extends AbstractField
             'select' => $field instanceof Select && $field->isMultiple()
                 ? self::sanitizeMultiSelectValue($value)
                 : sanitize_text_field(self::toScalarString($value)),
-            'textarea' => html_entity_decode(wp_kses_post(self::toScalarString($value))),
-            default => $value,
+            'textarea' => wp_kses_post(self::toScalarString($value)),
+            default => self::applySanitizeCallback($field->resolvedSanitizeCallback(), $value),
         };
+    }
+
+    /**
+     * Callers already guarantee $callback is either null or genuinely
+     * callable (resolvedSanitizeCallback() resolves it); the
+     * is_callable() check here is for PHPStan's benefit only, since it
+     * can't see that guarantee across the two methods.
+     */
+    private static function applySanitizeCallback(callable|string|null $callback, mixed $value): mixed
+    {
+        return null !== $callback && is_callable($callback) ? $callback($value) : $value;
     }
 
     /**

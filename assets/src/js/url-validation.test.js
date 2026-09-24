@@ -30,6 +30,8 @@ describe('isValidOrEmptyUrl', () => {
       'tel:+441234567890',
       'mailto:hello@example.test',
       'https://exämple.test/path',
+      'https://example.test/?x=&#39;',
+      'https://example.test/?a=1&b=2',
     ]
 
     accepted.forEach((url) => expect(isValidOrEmptyUrl(url), url).toBe(true))
@@ -43,6 +45,16 @@ describe('isValidOrEmptyUrl', () => {
       'https://example.test/a b',
       'javascript:alert(1)',
       'data:text/html,x',
+      'javascript&#58;alert(1)',
+      'https://example.test/"onmouseover=alert(1)',
+      'https://example.test/<script>',
+      'java&#9;script:alert(1)',
+      'java&#10;script:alert(1)',
+      'java&colon;script:alert(1)',
+      'java&Tab;script:alert(1)',
+      '\x01javascript:alert(1)',
+      'javascript&#58alert(1)',
+      'javascript&#x3A(1)',
     ]
 
     rejected.forEach((url) => expect(isValidOrEmptyUrl(url), url).toBe(false))
@@ -91,6 +103,27 @@ describe('isValidOrEmptyUrl', () => {
       expect(isValidOrEmptyUrl('https://example.test')).toBe(false)
     } finally {
       window.wpcBuilderUrlValidationSettings = original
+    }
+  })
+
+  it('does not throw when setting innerHTML fails, as a Trusted Types CSP would make it', () => {
+    const { isValidOrEmptyUrl } = window.wpcBuilderUrlValidation
+
+    const descriptor = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML')
+
+    Object.defineProperty(Element.prototype, 'innerHTML', {
+      configurable: true,
+      set () {
+        throw new TypeError('This document requires \'TrustedHTML\' assignment.')
+      },
+    })
+
+    try {
+      expect(() => isValidOrEmptyUrl('https://example.test')).not.toThrow()
+      expect(isValidOrEmptyUrl('https://example.test')).toBe(true)
+      expect(isValidOrEmptyUrl('javascript:alert(1)')).toBe(false)
+    } finally {
+      Object.defineProperty(Element.prototype, 'innerHTML', descriptor)
     }
   })
 })

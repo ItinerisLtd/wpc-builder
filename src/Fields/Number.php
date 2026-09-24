@@ -46,19 +46,30 @@ class Number extends AbstractField
         return static function (mixed $value) use ($min, $max): mixed {
             $value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-            if (null === $min || null === $max) {
-                return $value;
+            /**
+             * $value came from FILTER_SANITIZE_NUMBER_FLOAT, which only
+             * strips disallowed characters, not validates the result:
+             * malformed input like "50.1.2" survives as a string PHP's
+             * numeric-string comparison rules then treat as non-numeric,
+             * falling back to a byte-wise comparison ('5' < '9') that
+             * can clamp to the wrong bound. Casting both sides to float
+             * for the comparison avoids that; $minimum/$maximum are
+             * still returned as the original filter_var() string.
+             */
+            if (null !== $min) {
+                $minimum = filter_var($min, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+
+                if ((float) $value < (float) $minimum) {
+                    return $minimum;
+                }
             }
 
-            $minimum = filter_var($min, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
-            $maximum = filter_var($max, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+            if (null !== $max) {
+                $maximum = filter_var($max, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
 
-            if ($value < $minimum) {
-                return $minimum;
-            }
-
-            if ($value > $maximum) {
-                return $maximum;
+                if ((float) $value > (float) $maximum) {
+                    return $maximum;
+                }
             }
 
             return $value;
