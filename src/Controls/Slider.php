@@ -80,7 +80,7 @@ final class Slider extends AbstractControl implements HasAssets
     {
         $assets = self::controlsStylesheetAssets();
 
-        $jsSrc = Asset::url('dist/js/slider.js');
+        $jsSrc = Asset::url('js/slider.js');
 
         if ('' !== $jsSrc) {
             $assets[] = [
@@ -88,7 +88,7 @@ final class Slider extends AbstractControl implements HasAssets
                 'handle' => 'wpc-builder-slider',
                 'src' => $jsSrc,
                 'dependencies' => ['customize-controls', 'wp-i18n'],
-                'version' => Asset::version('dist/js/slider.js'),
+                'version' => Asset::version('js/slider.js'),
                 'args' => ['in_footer' => true],
             ];
         }

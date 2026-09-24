@@ -95,7 +95,7 @@ final class Select extends AbstractControl implements HasAssets
     {
         $assets = self::controlsStylesheetAssets();
 
-        $jsSrc = Asset::url('dist/js/select.js');
+        $jsSrc = Asset::url('js/select.js');
 
         if ('' !== $jsSrc) {
             $assets[] = [
@@ -103,7 +103,7 @@ final class Select extends AbstractControl implements HasAssets
                 'handle' => 'wpc-builder-select',
                 'src' => $jsSrc,
                 'dependencies' => ['customize-controls', 'wp-element', 'wp-components', 'wp-i18n'],
-                'version' => Asset::version('dist/js/select.js'),
+                'version' => Asset::version('js/select.js'),
                 'args' => ['in_footer' => true],
             ];
         }

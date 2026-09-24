@@ -48,8 +48,8 @@ final class Asset
      * Registrars\ControlAssetRegistrar) skip an empty src. See
      * announceUnresolvable() below for why this is no longer silent.
      *
-     * @param string      $relativePath Path inside this package, e.g.
-     *                                  'dist/css/controls.css'.
+     * @param string      $relativePath Path inside this package's dist/
+     *                                  directory, e.g. 'css/controls.css'.
      * @param string|null $packageRoot Test seam; defaults to packageRoot().
      * @param string|null $contentDir  Test seam; defaults to WP_CONTENT_DIR
      *                                 (a constant, so it can't be stubbed
@@ -62,9 +62,10 @@ final class Asset
     ): string {
         $packageRoot = self::normalisedPackageRoot($packageRoot);
         $contentDir = rtrim($contentDir ?? self::contentDir(), '/');
+        $distPath = self::distPath($relativePath);
 
         if ('' === $contentDir) {
-            self::announceUnresolvable($relativePath, $packageRoot, '(WP_CONTENT_DIR is not defined)');
+            self::announceUnresolvable($distPath, $packageRoot, '(WP_CONTENT_DIR is not defined)');
 
             return '';
         }
@@ -72,12 +73,12 @@ final class Asset
         $suffix = self::suffixWithin(self::resolve($packageRoot), $contentDir);
 
         if (null === $suffix) {
-            self::announceUnresolvable($relativePath, $packageRoot, $contentDir);
+            self::announceUnresolvable($distPath, $packageRoot, $contentDir);
 
             return '';
         }
 
-        return rtrim(content_url(), '/') . $suffix . '/' . $relativePath;
+        return rtrim(content_url(), '/') . $suffix . '/' . $distPath;
     }
 
     /**
@@ -166,19 +167,25 @@ final class Asset
 
     /**
      * The absolute filesystem path for a file or directory inside this
-     * package, e.g. 'dist/css/controls.css' or 'dist/js'. Unlike url(),
-     * this needs no WP_CONTENT_DIR/symlink resolution; that machinery
-     * exists only because a URL must be derived from content_url(), a
-     * concern that doesn't apply to a plain filesystem path.
+     * package's dist/ directory, e.g. 'css/controls.css' or 'js'. Unlike
+     * url(), this needs no WP_CONTENT_DIR/symlink resolution; that
+     * machinery exists only because a URL must be derived from
+     * content_url(), a concern that doesn't apply to a plain filesystem
+     * path.
      */
     public static function path(string $relativePath, ?string $packageRoot = null): string
     {
-        return self::normalisedPackageRoot($packageRoot) . '/' . $relativePath;
+        return self::normalisedPackageRoot($packageRoot) . '/' . self::distPath($relativePath);
     }
 
     private static function normalisedPackageRoot(?string $packageRoot): string
     {
         return rtrim($packageRoot ?? self::packageRoot(), '/');
+    }
+
+    private static function distPath(string $relativePath): string
+    {
+        return "dist/{$relativePath}";
     }
 
     public static function version(string $relativePath, ?string $packageRoot = null): ?int

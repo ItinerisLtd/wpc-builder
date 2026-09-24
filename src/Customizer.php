@@ -168,13 +168,13 @@ final class Customizer
             return;
         }
 
-        $src = Asset::url('dist/js/dependencies.js');
+        $src = Asset::url('js/dependencies.js');
 
         if ('' === $src) {
             return;
         }
 
-        $version = Asset::version('dist/js/dependencies.js');
+        $version = Asset::version('js/dependencies.js');
 
         wp_enqueue_script(
             'wpc-builder-dependencies',
@@ -220,13 +220,13 @@ final class Customizer
             return;
         }
 
-        $src = Asset::url('dist/js/required-when.js');
+        $src = Asset::url('js/required-when.js');
 
         if ('' === $src) {
             return;
         }
 
-        $version = Asset::version('dist/js/required-when.js');
+        $version = Asset::version('js/required-when.js');
 
         wp_enqueue_script(
             'wpc-builder-required-when',
@@ -238,13 +238,13 @@ final class Customizer
 
         wp_localize_script('wpc-builder-required-when', 'wpcBuilderRequiredWhenDependencies', $payload);
 
-        $styleSrc = Asset::url('dist/css/required-when.css');
+        $styleSrc = Asset::url('css/required-when.css');
 
         if ('' === $styleSrc) {
             return;
         }
 
-        $styleVersion = Asset::version('dist/css/required-when.css');
+        $styleVersion = Asset::version('css/required-when.css');
 
         wp_enqueue_style(
             'wpc-builder-required-when',
@@ -272,8 +272,8 @@ final class Customizer
 
     private function enqueueUrlValidation(): void
     {
-        $validationSrc = Asset::url('dist/js/url-validation.js');
-        $validationVersion = Asset::version('dist/js/url-validation.js');
+        $validationSrc = Asset::url('js/url-validation.js');
+        $validationVersion = Asset::version('js/url-validation.js');
 
         if ('' === $validationSrc) {
             return;
@@ -296,13 +296,13 @@ final class Customizer
             'before',
         );
 
-        $src = Asset::url('dist/js/url.js');
+        $src = Asset::url('js/url.js');
 
         if ('' === $src) {
             return;
         }
 
-        $version = Asset::version('dist/js/url.js');
+        $version = Asset::version('js/url.js');
 
         wp_enqueue_script(
             'wpc-builder-url-validation',

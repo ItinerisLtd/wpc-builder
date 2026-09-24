@@ -22,7 +22,7 @@ trait HasControlsStylesheet
      */
     private static function controlsStylesheetAssets(): array
     {
-        $src = Asset::url('dist/css/controls.css');
+        $src = Asset::url('css/controls.css');
 
         if ('' === $src) {
             return [];
@@ -33,7 +33,7 @@ trait HasControlsStylesheet
                 'type' => 'style',
                 'handle' => 'wpc-builder',
                 'src' => $src,
-                'version' => Asset::version('dist/css/controls.css'),
+                'version' => Asset::version('css/controls.css'),
             ],
         ];
     }

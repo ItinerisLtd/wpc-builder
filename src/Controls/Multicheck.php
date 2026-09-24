@@ -77,7 +77,7 @@ final class Multicheck extends AbstractControl implements HasAssets
     {
         $assets = self::controlsStylesheetAssets();
 
-        $jsSrc = Asset::url('dist/js/multicheck.js');
+        $jsSrc = Asset::url('js/multicheck.js');
 
         if ('' !== $jsSrc) {
             $assets[] = [
@@ -85,7 +85,7 @@ final class Multicheck extends AbstractControl implements HasAssets
                 'handle' => 'wpc-builder-multicheck',
                 'src' => $jsSrc,
                 'dependencies' => ['customize-controls'],
-                'version' => Asset::version('dist/js/multicheck.js'),
+                'version' => Asset::version('js/multicheck.js'),
                 'args' => ['in_footer' => true],
             ];
         }

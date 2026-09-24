@@ -30,7 +30,7 @@ it('builds a URL for a package installed under a SAGE 9 theme, outside the theme
     expect(str_starts_with($packageRoot, $themeDir . '/'))->toBeFalse();
 
     $url = Asset::url(
-        'dist/css/controls.css',
+        'css/controls.css',
         $packageRoot,
         '/srv/site/web/app',
     );
@@ -45,7 +45,7 @@ it('builds a URL for a package installed in a PLUGIN or mu-plugin', function () 
     $stubContentUrl('https://example.test/app');
 
     expect(Asset::url(
-        'dist/js/repeater.js',
+        'js/repeater.js',
         '/srv/site/web/app/plugins/acme-settings/vendor/itinerisltd/wpc-builder',
         '/srv/site/web/app',
     ))->toBe(
@@ -54,7 +54,7 @@ it('builds a URL for a package installed in a PLUGIN or mu-plugin', function () 
     );
 
     expect(Asset::url(
-        'dist/js/repeater.js',
+        'js/repeater.js',
         '/srv/site/web/app/mu-plugins/acme-settings/vendor/itinerisltd/wpc-builder',
         '/srv/site/web/app',
     ))->toBe(
@@ -67,7 +67,7 @@ it('builds a URL on a non-Bedrock wp-content layout', function () use ($stubCont
     $stubContentUrl('https://example.test/wp-content');
 
     $url = Asset::url(
-        'dist/css/toggle.css',
+        'css/toggle.css',
         '/var/www/html/wp-content/themes/acme/vendor/itinerisltd/wpc-builder',
         '/var/www/html/wp-content',
     );
@@ -84,7 +84,7 @@ it('normalises trailing slashes on both the content directory and content_url()'
     $stubContentUrl('https://example.test/app/');
 
     $url = Asset::url(
-        'dist/css/toggle.css',
+        'css/toggle.css',
         '/srv/site/web/app/themes/acme/vendor/itinerisltd/wpc-builder/',
         '/srv/site/web/app/',
     );
@@ -102,7 +102,7 @@ it('returns an empty string when the package is genuinely outside WP_CONTENT_DIR
     Functions\expect('_doing_it_wrong')->once();
 
     $url = Asset::url(
-        'dist/css/toggle.css',
+        'css/toggle.css',
         '/srv/site/vendor/itinerisltd/wpc-builder',
         '/srv/site/web/app',
     );
@@ -117,7 +117,7 @@ it('returns an empty string, and says so, when WP_CONTENT_DIR is unavailable', f
     Functions\expect('_doing_it_wrong')->once();
 
     expect(Asset::url(
-        'dist/css/toggle.css',
+        'css/toggle.css',
         '/srv/site/web/app/themes/acme/vendor/itinerisltd/wpc-builder',
         '',
     ))->toBe('');
@@ -138,7 +138,7 @@ it('announces the unresolvable install rather than failing silently', function (
         );
 
     $url = Asset::url(
-        'dist/css/toggle.css',
+        'css/toggle.css',
         '/srv/site/vendor/itinerisltd/wpc-builder',
         '/srv/site/web/app',
     );
@@ -186,7 +186,7 @@ it(
         try {
             $stubContentUrl('https://example.test/app');
 
-            $url = Asset::url('dist/css/toggle.css', $packageRoot, $symlinkedContent);
+            $url = Asset::url('css/toggle.css', $packageRoot, $symlinkedContent);
 
             expect($url)->toBe(
                 'https://example.test/app/themes/acme/vendor/itinerisltd/wpc-builder'
@@ -201,23 +201,23 @@ it(
 it('falls back to WP_CONTENT_DIR when no content directory is passed', function () use ($stubContentUrl): void {
     $stubContentUrl('https://example.test/app');
 
-    $url = Asset::url('dist/css/controls.css');
+    $url = Asset::url('css/controls.css');
 
     expect($url)->toStartWith('https://example.test/app/')
         ->and($url)->toEndWith('/dist/css/controls.css');
 });
 
 it('resolves a filesystem path for a file inside the package, defaulting to packageRoot()', function (): void {
-    expect(Asset::path('dist/css/controls.css'))
+    expect(Asset::path('css/controls.css'))
         ->toBe(Asset::packageRoot() . '/dist/css/controls.css');
 });
 
 it('resolves a filesystem path using an explicit packageRoot override', function (): void {
-    expect(Asset::path('dist/js', '/srv/site/web/app/themes/acme/vendor/itinerisltd/wpc-builder'))
+    expect(Asset::path('js', '/srv/site/web/app/themes/acme/vendor/itinerisltd/wpc-builder'))
         ->toBe('/srv/site/web/app/themes/acme/vendor/itinerisltd/wpc-builder/dist/js');
 });
 
 it('trims a trailing slash on an explicit packageRoot before resolving a path', function (): void {
-    expect(Asset::path('dist/js', '/srv/site/web/app/themes/acme/vendor/itinerisltd/wpc-builder/'))
+    expect(Asset::path('js', '/srv/site/web/app/themes/acme/vendor/itinerisltd/wpc-builder/'))
         ->toBe('/srv/site/web/app/themes/acme/vendor/itinerisltd/wpc-builder/dist/js');
 });
