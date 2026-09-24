@@ -53,7 +53,7 @@ final class AttachmentValue
 
             return [
                 'id' => $attachmentId,
-                'url' => $value,
+                'url' => esc_url_raw($value),
                 'filename' => basename((string) get_attached_file($attachmentId)),
             ];
         }
@@ -62,7 +62,7 @@ final class AttachmentValue
 
         return [
             'id' => $attachmentId,
-            'url' => (string) wp_get_attachment_url($attachmentId),
+            'url' => esc_url_raw((string) wp_get_attachment_url($attachmentId)),
             'filename' => basename((string) get_attached_file($attachmentId)),
         ];
     }
@@ -87,11 +87,11 @@ final class AttachmentValue
     private static function toUrl(mixed $value): string
     {
         if (is_array($value) && isset($value['url'])) {
-            return self::toScalarString($value['url']);
+            return esc_url_raw(self::toScalarString($value['url']));
         }
 
         if (is_numeric($value)) {
-            return (string) wp_get_attachment_url(self::toAbsint($value));
+            return esc_url_raw((string) wp_get_attachment_url(self::toAbsint($value)));
         }
 
         return esc_url_raw(self::toScalarString($value));

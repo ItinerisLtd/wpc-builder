@@ -7,6 +7,7 @@ use Itineris\WpcBuilder\Config;
 use Itineris\WpcBuilder\Enums\SaveAs;
 use Itineris\WpcBuilder\Fields\Checkbox;
 use Itineris\WpcBuilder\Fields\Color;
+use Itineris\WpcBuilder\Fields\Dimensions;
 use Itineris\WpcBuilder\Fields\DropdownPages;
 use Itineris\WpcBuilder\Fields\Image;
 use Itineris\WpcBuilder\Fields\Link;
@@ -309,14 +310,25 @@ it('sanitizes an email sub-field through filter_var(FILTER_SANITIZE_EMAIL)', fun
     expect($sanitize([['contact' => 'not an email!']]))->toBe([['contact' => 'notanemail!']]);
 });
 
-it('decodes a textarea sub-field through html_entity_decode(wp_kses_post())', function (): void {
+it('sanitizes a textarea sub-field through wp_kses_post() only, like the top-level Textarea field', function (): void {
     Functions\when('wp_kses_post')->returnArg();
 
     $sanitize = Repeater::make('rows')
         ->setFields([Textarea::make('body')])
         ->buildSettingArgs(new Config())['sanitize_callback'];
 
-    expect($sanitize([['body' => 'Tom &amp; Jerry']]))->toBe([['body' => 'Tom & Jerry']]);
+    expect($sanitize([['body' => '&lt;script&gt;alert(1)&lt;/script&gt;']]))
+        ->toBe([['body' => '&lt;script&gt;alert(1)&lt;/script&gt;']]);
+});
+
+it('sanitizes a sub-field with no dedicated dispatch case via the field\'s own resolved sanitizer', function (): void {
+    Functions\when('sanitize_text_field')->justReturn('sanitized');
+
+    $sanitize = Repeater::make('rows')
+        ->setFields([Dimensions::make('padding')])
+        ->buildSettingArgs(new Config())['sanitize_callback'];
+
+    expect($sanitize([['padding' => '10px']]))->toBe([['padding' => 'sanitized']]);
 });
 
 it('sanitizes a color sub-field only when truthy', function (): void {
@@ -355,12 +367,32 @@ it('lets an explicit per-sub-field sanitize_callback win over the type-based swi
     expect($sanitize([['shout' => 'hi']]))->toBe([['shout' => 'HI']]);
 });
 
-it('leaves an uncoerced sub-field type untouched', function (): void {
+it('falls through to the type-based switch when a sanitize_callback override is not callable', function (): void {
+    Functions\when('sanitize_text_field')->justReturn('sanitized');
+
+    $sanitize = Repeater::make('rows')
+        ->setFields([Text::make('shout')->setSanitizeCallback('this_function_does_not_exist')])
+        ->buildSettingArgs(new Config())['sanitize_callback'];
+
+    expect($sanitize([['shout' => 'hi']]))->toBe([['shout' => 'sanitized']]);
+});
+
+it('sanitizes an unmapped sub-field type via its own default sanitizer, not by leaving it raw', function (): void {
     $sanitize = Repeater::make('rows')
         ->setFields([\Itineris\WpcBuilder\Fields\Number::make('count')])
         ->buildSettingArgs(new Config())['sanitize_callback'];
 
-    expect($sanitize([['count' => '42']]))->toBe([['count' => '42']]);
+    expect($sanitize([['count' => 'abc123def']]))->toBe([['count' => '123']]);
+});
+
+it('falls back to the field default, not raw, for an unmapped type with an uncallable override', function (): void {
+    Functions\when('sanitize_text_field')->justReturn('sanitized');
+
+    $sanitize = Repeater::make('rows')
+        ->setFields([Dimensions::make('padding')->setSanitizeCallback('this_function_does_not_exist')])
+        ->buildSettingArgs(new Config())['sanitize_callback'];
+
+    expect($sanitize([['padding' => '10px']]))->toBe([['padding' => 'sanitized']]);
 });
 
 it('hooks wp_enqueue_media() when a sub-field is an Image field', function (): void {

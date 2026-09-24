@@ -198,10 +198,37 @@ abstract class AbstractField
      * "has its own override" from "using the built-in default". Needed
      * by Fields\Repeater to decide, for a sub-field, whether its own
      * override wins over the type-based sanitize dispatch.
+     *
+     * Deliberately not validated for callability: buildSettingArgs()
+     * passes whatever was set straight through to WordPress via this
+     * accessor, exactly as a caller of setSanitizeCallback() wrote it.
+     * A broken callback (e.g. a typo'd function name) reaching WordPress
+     * this way surfaces loudly there instead of this package silently
+     * treating it as "no sanitizer configured" and letting the raw
+     * value through unsanitised. See resolvedSanitizeCallback() for the
+     * validated variant Fields\Repeater needs instead.
      */
     final public function sanitizeCallback(): callable|string|null
     {
         return $this->sanitizeCallback;
+    }
+
+    /**
+     * Unlike sanitizeCallback(), an explicit override is only used here
+     * when it is genuinely callable; a broken one falls back to the
+     * field's own default the same way an unset override would. Used by
+     * Fields\Repeater to give an unmapped sub-field type a real
+     * sanitizer instead of storing raw data. buildSettingArgs() does
+     * NOT use this for its own 'sanitize_callback' arg, on purpose (see
+     * sanitizeCallback() above).
+     */
+    final public function resolvedSanitizeCallback(): callable|string|null
+    {
+        if (null !== $this->sanitizeCallback && is_callable($this->sanitizeCallback)) {
+            return $this->sanitizeCallback;
+        }
+
+        return $this->defaultSanitizeCallback();
     }
 
     /**

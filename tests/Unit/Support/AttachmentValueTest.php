@@ -40,18 +40,27 @@ it('escapes a url string when saving as url', function (): void {
         ->toBe('https://example.test/img.jpg');
 });
 
-it('converts a numeric value to a url when saving as url', function (): void {
+it('escapes the url resolved from a numeric value when saving as url', function (): void {
+    Functions\expect('esc_url_raw')
+        ->once()
+        ->with('https://example.test/img.jpg')
+        ->andReturnFirstArg();
+
     expect(AttachmentValue::sanitize(42, SaveAs::URL))->toBe('https://example.test/img.jpg');
 });
 
-it('reads the url out of an array value', function (): void {
-    Functions\expect('esc_url_raw')->never();
+it('escapes the url read out of an array value', function (): void {
+    Functions\expect('esc_url_raw')
+        ->once()
+        ->with('javascript:alert(1)')
+        ->andReturn('');
 
-    expect(AttachmentValue::sanitize(['url' => 'https://example.test/img.jpg'], SaveAs::URL))
-        ->toBe('https://example.test/img.jpg');
+    expect(AttachmentValue::sanitize(['url' => 'javascript:alert(1)'], SaveAs::URL))->toBe('');
 });
 
-it('builds the three-key array shape', function (): void {
+it('builds the three-key array shape, escaping the resolved url', function (): void {
+    Functions\when('esc_url_raw')->returnArg();
+
     expect(AttachmentValue::sanitize(42, SaveAs::ARRAY))->toBe([
         'id' => 42,
         'url' => 'https://example.test/img.jpg',
@@ -67,6 +76,19 @@ it('preserves an already-shaped array', function (): void {
     expect(AttachmentValue::sanitize($value, SaveAs::ARRAY))->toBe([
         'id' => 42,
         'url' => 'https://example.test/img.jpg',
+        'filename' => 'img.jpg',
+    ]);
+});
+
+it('escapes a bare url string when saving as the array shape', function (): void {
+    Functions\expect('esc_url_raw')
+        ->once()
+        ->with('javascript:alert(1)')
+        ->andReturn('');
+
+    expect(AttachmentValue::sanitize('javascript:alert(1)', SaveAs::ARRAY))->toBe([
+        'id' => 42,
+        'url' => '',
         'filename' => 'img.jpg',
     ]);
 });

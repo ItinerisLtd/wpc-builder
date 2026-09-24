@@ -210,6 +210,28 @@ describe('is_valid_or_empty_url()', function (): void {
         'absolute with space' => 'https://example.test/a b',
         'javascript scheme' => 'javascript:alert(1)',
         'data scheme' => 'data:text/html,x',
+        'entity-encoded javascript scheme' => 'javascript&#58;alert(1)',
+        'embedded double quote' => 'https://example.test/"onmouseover=alert(1)',
+        'embedded angle bracket' => 'https://example.test/<script>',
+        'entity-encoded tab splitting a disallowed scheme' => 'java&#9;script:alert(1)',
+        'entity-encoded newline splitting a disallowed scheme' => 'java&#10;script:alert(1)',
+        'HTML5 named-entity colon' => 'java&colon;script:alert(1)',
+        'HTML5 named-entity tab splitting a disallowed scheme' => 'java&Tab;script:alert(1)',
+        'leading C0 control surviving trim()' => "\x01javascript:alert(1)",
+        'semicolonless decimal numeric reference' => 'javascript&#58alert(1)',
+        'semicolonless hex numeric reference' => 'javascript&#x3A(1)',
+        'semicolonless legacy &lt reconstructing an angle bracket' => 'java&ltscript:alert(1)',
+        'semicolonless legacy &gt reconstructing an angle bracket' => 'java&gtscript:alert(1)',
+        'semicolonless legacy &quot reconstructing a double quote' => 'java&quotscript:alert(1)',
+    ]);
+
+    it('does not mangle an already-terminated numeric reference or a plain query string ampersand', function (
+        string $url
+    ): void {
+        expect(is_valid_or_empty_url($url))->toBeTrue();
+    })->with([
+        'already-terminated numeric reference' => 'https://example.test/?x=&#39;',
+        'query string ampersand' => 'https://example.test/?a=1&b=2',
     ]);
 
     it('rejects a non-scalar value', function (): void {
