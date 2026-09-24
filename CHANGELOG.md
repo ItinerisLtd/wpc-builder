@@ -6,6 +6,16 @@ version is published. See [docs/releasing.md](docs/releasing.md).
 
 <!-- release-notes:insert-after -->
 
+## [0.3.1] - 2026-09-24
+
+### What's Changed
+* fix(assets): auto-resolve Asset::url/path/version to dist/ by @codepuncher in https://github.com/ItinerisLtd/wpc-builder/pull/42
+* fix(repeater): follow WP admin colour scheme on focus/active states by @codepuncher in https://github.com/ItinerisLtd/wpc-builder/pull/43
+* fix(security): resolve issues found in external security review by @codepuncher in https://github.com/ItinerisLtd/wpc-builder/pull/44
+
+
+**Full Changelog**: https://github.com/ItinerisLtd/wpc-builder/compare/0.3.0...v0.3.1
+
 ## [0.3.0] - 2026-09-23
 
 ### What's Changed
