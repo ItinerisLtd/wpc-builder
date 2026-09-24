@@ -32,6 +32,26 @@
   cursor: grabbing;
 }
 
+/**
+ * !important: browsers draw a default `summary:focus` outline that's a
+ * fixed, non-scheme-aware colour and otherwise wins outright, since
+ * nothing here competes with it.
+ */
+.wpc-builder-repeater__row-header:focus,
+.wpc-builder-repeater__row-header:active {
+  outline: none !important;
+}
+
+/**
+ * WP core's own focus ring (see .customize-control-header .choice:focus),
+ * not an offset outline. outline stays transparent rather than none for
+ * Windows High Contrast Mode, which ignores box-shadow.
+ */
+.wpc-builder-repeater__row-header:focus-visible {
+  box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wpc-color-primary) !important;
+  outline: 1px solid transparent !important;
+}
+
 .wpc-builder-repeater__row-header::-webkit-details-marker {
   display: none;
 }
@@ -89,6 +109,27 @@
   color: var(--wpc-color-danger);
   cursor: pointer;
   padding: 2px var(--wpc-space-xs);
+}
+
+/**
+ * !important: some admin plugins enqueue an unscoped `button:focus`
+ * reset that otherwise wins outright, since nothing here competes
+ * with it.
+ */
+.wpc-builder-repeater__remove:focus,
+.wpc-builder-repeater__remove:active {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/**
+ * WP core's own focus ring (see .customize-control-header .choice:focus),
+ * not an offset outline. outline stays transparent rather than none for
+ * Windows High Contrast Mode, which ignores box-shadow.
+ */
+.wpc-builder-repeater__remove:focus-visible {
+  box-shadow: 0 0 0 var(--wp-admin-border-width-focus, 1.5px) var(--wpc-color-primary) !important;
+  outline: 1px solid transparent !important;
 }
 
 .wpc-builder-repeater__row-body {
@@ -196,6 +237,17 @@
   padding: 0;
   border: 1px solid var(--wpc-color-border);
   background: none;
+}
+
+/**
+ * :focus, not :focus-visible: this input is tabindex="-1" and
+ * aria-hidden="true" (see repeater.js), so it's reachable by mouse
+ * click only, and browsers generally don't treat a mouse-focused
+ * element as focus-visible.
+ */
+.wpc-builder-repeater__color-picker:focus {
+  outline: 2px solid var(--wpc-color-primary);
+  outline-offset: 2px;
 }
 
 .wpc-builder-repeater__color--empty .wpc-builder-repeater__color-picker {
