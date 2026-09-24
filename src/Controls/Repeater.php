@@ -184,18 +184,18 @@ final class Repeater extends AbstractControl implements HasAssets
     {
         $assets = [];
 
-        $cssSrc = Asset::url('dist/css/repeater.css');
+        $cssSrc = Asset::url('css/repeater.css');
 
         if ('' !== $cssSrc) {
             $assets[] = [
                 'type' => 'style',
                 'handle' => 'wpc-builder-repeater',
                 'src' => $cssSrc,
-                'version' => Asset::version('dist/css/repeater.css'),
+                'version' => Asset::version('css/repeater.css'),
             ];
         }
 
-        $jsSrc = Asset::url('dist/js/repeater.js');
+        $jsSrc = Asset::url('js/repeater.js');
 
         if ('' !== $jsSrc) {
             $assets[] = [
@@ -208,7 +208,7 @@ final class Repeater extends AbstractControl implements HasAssets
                     'wp-i18n',
                     'wpc-builder-url-validation-core',
                 ],
-                'version' => Asset::version('dist/js/repeater.js'),
+                'version' => Asset::version('js/repeater.js'),
                 'args' => ['in_footer' => true],
             ];
         }

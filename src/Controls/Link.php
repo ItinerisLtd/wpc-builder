@@ -81,20 +81,20 @@ final class Link extends AbstractControl implements HasAssets
     {
         $assets = [];
 
-        $cssSrc = Asset::url('dist/css/link.css');
+        $cssSrc = Asset::url('css/link.css');
 
         if ('' !== $cssSrc) {
             $assets[] = [
                 'type' => 'style',
                 'handle' => 'wpc-builder-link',
                 'src' => $cssSrc,
-                'version' => Asset::version('dist/css/link.css'),
+                'version' => Asset::version('css/link.css'),
             ];
         }
 
         array_push($assets, ...self::toggleStylesheetAssets(), ...self::controlsStylesheetAssets());
 
-        $jsSrc = Asset::url('dist/js/link.js');
+        $jsSrc = Asset::url('js/link.js');
 
         if ('' !== $jsSrc) {
             $assets[] = [
@@ -102,7 +102,7 @@ final class Link extends AbstractControl implements HasAssets
                 'handle' => 'wpc-builder-link',
                 'src' => $jsSrc,
                 'dependencies' => ['customize-controls', 'wpc-builder-url-validation-core'],
-                'version' => Asset::version('dist/js/link.js'),
+                'version' => Asset::version('js/link.js'),
                 'args' => ['in_footer' => true],
             ];
         }

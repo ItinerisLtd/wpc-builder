@@ -78,7 +78,7 @@ final class Editor extends AbstractControl implements HasAssets
     {
         $assets = self::controlsStylesheetAssets();
 
-        $jsSrc = Asset::url('dist/js/editor.js');
+        $jsSrc = Asset::url('js/editor.js');
 
         if ('' !== $jsSrc) {
             $assets[] = [
@@ -86,7 +86,7 @@ final class Editor extends AbstractControl implements HasAssets
                 'handle' => 'wpc-builder-editor',
                 'src' => $jsSrc,
                 'dependencies' => ['customize-controls', 'editor'],
-                'version' => Asset::version('dist/js/editor.js'),
+                'version' => Asset::version('js/editor.js'),
                 'args' => ['in_footer' => true],
             ];
         }

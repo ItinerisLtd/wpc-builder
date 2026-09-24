@@ -23,7 +23,7 @@ trait HasToggleStylesheet
      */
     private static function toggleStylesheetAssets(): array
     {
-        $src = Asset::url('dist/css/toggle.css');
+        $src = Asset::url('css/toggle.css');
 
         if ('' === $src) {
             return [];
@@ -34,7 +34,7 @@ trait HasToggleStylesheet
                 'type' => 'style',
                 'handle' => 'wpc-builder-toggle',
                 'src' => $src,
-                'version' => Asset::version('dist/css/toggle.css'),
+                'version' => Asset::version('css/toggle.css'),
             ],
         ];
     }

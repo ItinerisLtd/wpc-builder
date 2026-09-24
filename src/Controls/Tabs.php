@@ -67,18 +67,18 @@ final class Tabs extends AbstractControl implements HasAssets
     {
         $assets = [];
 
-        $cssSrc = Asset::url('dist/css/tabs.css');
+        $cssSrc = Asset::url('css/tabs.css');
 
         if ('' !== $cssSrc) {
             $assets[] = [
                 'type' => 'style',
                 'handle' => 'wpc-builder-tabs',
                 'src' => $cssSrc,
-                'version' => Asset::version('dist/css/tabs.css'),
+                'version' => Asset::version('css/tabs.css'),
             ];
         }
 
-        $jsSrc = Asset::url('dist/js/tabs.js');
+        $jsSrc = Asset::url('js/tabs.js');
 
         if ('' !== $jsSrc) {
             $assets[] = [
@@ -86,7 +86,7 @@ final class Tabs extends AbstractControl implements HasAssets
                 'handle' => 'wpc-builder-tabs',
                 'src' => $jsSrc,
                 'dependencies' => ['customize-controls'],
-                'version' => Asset::version('dist/js/tabs.js'),
+                'version' => Asset::version('js/tabs.js'),
                 'args' => ['in_footer' => true],
             ];
         }

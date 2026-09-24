@@ -97,7 +97,7 @@ final class Image extends AbstractControl implements HasAssets
     {
         $assets = self::controlsStylesheetAssets();
 
-        $jsSrc = Asset::url('dist/js/image.js');
+        $jsSrc = Asset::url('js/image.js');
 
         if ('' !== $jsSrc) {
             $assets[] = [
@@ -105,7 +105,7 @@ final class Image extends AbstractControl implements HasAssets
                 'handle' => 'wpc-builder-image',
                 'src' => $jsSrc,
                 'dependencies' => ['customize-controls', 'underscore', 'wp-i18n'],
-                'version' => Asset::version('dist/js/image.js'),
+                'version' => Asset::version('js/image.js'),
                 'args' => ['in_footer' => true],
             ];
         }
