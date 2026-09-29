@@ -97,4 +97,17 @@ class Select extends AbstractChoiceField
 
         return $args;
     }
+
+    /**
+     * Block themes and classic-widget sites never load this stylesheet in the Customizer.
+     */
+    public static function enqueueComponentsStylesheet(): void
+    {
+        wp_enqueue_style('wp-components');
+    }
+
+    protected function afterRegister(): void
+    {
+        add_action('customize_controls_enqueue_scripts', [self::class, 'enqueueComponentsStylesheet'], 9);
+    }
 }
