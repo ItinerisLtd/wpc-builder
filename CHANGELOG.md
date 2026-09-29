@@ -6,6 +6,21 @@ version is published. See [docs/releasing.md](docs/releasing.md).
 
 <!-- release-notes:insert-after -->
 
+## [0.3.2] - 2026-09-29
+
+### What's Changed
+* chore(deps-dev): bump phpstan/phpstan from 2.2.12 to 2.2.13 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/46
+* chore(deps-dev): bump jsdom from 30.1.0 to 30.1.1 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/47
+* chore(deps-dev): bump @wordpress/e2e-test-utils-playwright from 1.54.0 to 2.1.0 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/48
+* chore(deps-dev): bump vite from 8.3.0 to 8.3.1 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/49
+* chore(deps-dev): bump postcss-nesting from 14.0.1 to 14.0.2 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/51
+* chore(deps-dev): bump vitest from 5.0.1 to 5.0.2 by @dependabot[bot] in https://github.com/ItinerisLtd/wpc-builder/pull/52
+* fix(select): enqueue wp-components stylesheet for the enhanced select UI by @codepuncher in https://github.com/ItinerisLtd/wpc-builder/pull/54
+* fix(select): mount enhanced select with createRoot by @codepuncher in https://github.com/ItinerisLtd/wpc-builder/pull/55
+
+
+**Full Changelog**: https://github.com/ItinerisLtd/wpc-builder/compare/v0.3.1...v0.3.2
+
 ## [0.3.1] - 2026-09-24
 
 ### What's Changed
