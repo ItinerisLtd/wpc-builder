@@ -3,7 +3,7 @@ import { translate } from './i18n.js'
 
 export function canUseCoreComponents (wp) {
   return typeof wp?.element?.createElement === 'function'
-    && typeof wp?.element?.render === 'function'
+    && typeof wp?.element?.createRoot === 'function'
     && typeof wp?.element?.useEffect === 'function'
     && typeof wp?.element?.useState === 'function'
     && typeof wp?.components?.ComboboxControl === 'function'
@@ -103,7 +103,7 @@ export function mountEnhancedSelect ({
 
   element.insertAdjacentElement('afterend', mountPoint)
 
-  const { createElement, render, useEffect, useState } = wp.element
+  const { createElement, createRoot, useEffect, useState } = wp.element
   const { ComboboxControl, FormTokenField } = wp.components
   const accessibleLabel = label || translate('Select options', wp)
   const searchPlaceholder = translate('Start typing to search options', wp)
@@ -115,6 +115,8 @@ export function mountEnhancedSelect ({
     const [value, setValue] = useState(initialValue)
 
     useEffect(() => {
+      deactivateNativeSelect(element)
+
       if (typeof setting.bind !== 'function') {
         return undefined
       }
@@ -127,6 +129,10 @@ export function mountEnhancedSelect ({
       }
 
       setting.bind(listener)
+
+      if (typeof setting.get === 'function') {
+        listener(setting.get())
+      }
 
       if (typeof setting.unbind !== 'function') {
         return undefined
@@ -172,9 +178,8 @@ export function mountEnhancedSelect ({
   }
 
   try {
-    render(createElement(EnhancedSelect), mountPoint)
     setNativeValue(element, initialValue, multiple)
-    deactivateNativeSelect(element)
+    createRoot(mountPoint).render(createElement(EnhancedSelect))
 
     return true
   } catch (error) {

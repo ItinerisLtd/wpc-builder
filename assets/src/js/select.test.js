@@ -1,7 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest'
-// This file builds document/window as plain objects in several tests below (see afterEach), which
-// only works in Vitest's default 'node' environment. The two tests needing a real DOM (for
-// wp.element.render) construct one locally with JSDOM instead.
+/**
+ * This file builds document/window as plain objects in several tests below (see afterEach), which
+ * only works in Vitest's default 'node' environment. The two tests needing a real DOM (for the
+ * enhanced UI's mount point) construct one locally with JSDOM instead.
+ */
 import { JSDOM } from 'jsdom'
 import {
   bootstrapSelectEnhancements,
@@ -148,7 +150,7 @@ it('attempts mount with wp-core payload when enhancement prerequisites exist', (
       customize,
       element: {
         createElement: () => null,
-        render: () => null,
+        createRoot: () => null,
         useEffect: () => null,
         useState: () => null,
       },
@@ -214,7 +216,7 @@ it('renders ComboboxControl in single mode and writes scalar values', () => {
 
         return { component, props }
       }),
-      render: vi.fn(),
+      createRoot: vi.fn(() => ({ render: vi.fn() })),
       useEffect: (callback) => callback(),
       useState: (initial) => [initial, vi.fn()],
     },
@@ -242,6 +244,12 @@ it('renders ComboboxControl in single mode and writes scalar values', () => {
   })
 
   expect(didMount).toBe(true)
+  expect(wp.element.createRoot).toHaveBeenCalledWith(expect.objectContaining({
+    className: 'wpc-builder-select__enhanced-ui',
+  }))
+  expect(wp.element.createRoot.mock.results[0].value.render).toHaveBeenCalledTimes(1)
+  expect(select.disabled).toBe(true)
+  expect(select.tabIndex).toBe(-1)
   expect(comboboxControl).toHaveBeenCalledWith(expect.objectContaining({
     label: '',
     'aria-label': 'Homepage selector',
@@ -286,7 +294,7 @@ it('renders FormTokenField in multiple mode and writes value arrays', () => {
 
         return { component, props }
       }),
-      render: vi.fn(),
+      createRoot: vi.fn(() => ({ render: vi.fn() })),
       useEffect: (callback) => callback(),
       useState: (initial) => [initial, vi.fn()],
     },
@@ -371,7 +379,7 @@ it('canUseCoreComponents returns false when hooks are absent', () => {
   const base = {
     element: {
       createElement: () => null,
-      render: () => null,
+      createRoot: () => null,
       useEffect: () => null,
       useState: () => null,
     },
@@ -384,4 +392,5 @@ it('canUseCoreComponents returns false when hooks are absent', () => {
   expect(canUseCoreComponents(base)).toBe(true)
   expect(canUseCoreComponents({ ...base, element: { ...base.element, useEffect: undefined } })).toBe(false)
   expect(canUseCoreComponents({ ...base, element: { ...base.element, useState: undefined } })).toBe(false)
+  expect(canUseCoreComponents({ ...base, element: { ...base.element, createRoot: undefined } })).toBe(false)
 })
