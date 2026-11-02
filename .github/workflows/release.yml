@@ -35,17 +35,25 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: gh release upload "${RELEASE_TAG}" build/*.zip --clobber
+      - name: Generate changelog PR token
+        id: changelog-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          client-id: ${{ secrets.CHANGELOG_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.CHANGELOG_BOT_PRIVATE_KEY }}
+          permission-issues: write
+          permission-pull-requests: write
       - name: Update CHANGELOG.md
         env:
           # GITHUB_TOKEN writes the branch and the CHANGELOG.md commit, which
-          # GitHub only auto-signs for its own token, not a personal PAT - a
-          # required_signatures ruleset would reject the commit otherwise.
+          # GitHub only auto-signs for its own token. A required_signatures
+          # ruleset would reject the commit otherwise.
           GITHUB_TOKEN: ${{ github.token }}
           # A pull request opened with the workflow's own token never triggers
           # `on: pull_request`, so CI would not run and Kodiak could not merge.
-          # Without REPO_PAT the PR still opens, but its required checks never
-          # report, so it needs a ruleset bypass to merge.
-          CHANGELOG_PR_TOKEN: ${{ secrets.REPO_PAT }}
+          # The itineris-changelog App token opens it instead, so its required
+          # checks report and Kodiak approves and merges it.
+          CHANGELOG_PR_TOKEN: ${{ steps.changelog-token.outputs.token }}
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: bash scripts/update-changelog.sh "${RELEASE_TAG}"
 

@@ -33,11 +33,18 @@ GITHUB_REPOSITORY=ItinerisLtd/wpc-builder bash scripts/update-changelog.sh v1.2.
 Already done, recorded in case it ever needs rebuilding. Publishing itself
 needs no secrets; it uses Trusted Publishing over GitHub OIDC.
 
-- A `REPO_PAT` repository secret holding an `itinerisbot` personal access
-  token that can write to this repository. The changelog PR is opened with it
-  so that CI runs and Kodiak can merge it. Without it the PR still opens, but
-  the required `php` and `assets` checks never report, so only someone who can
-  bypass the ruleset is able to merge it.
+- The `itineris-changelog` GitHub App, installed on this repository only, with
+  Pull requests and Issues write access. Its Client ID and private key are the
+  `CHANGELOG_BOT_CLIENT_ID` and `CHANGELOG_BOT_PRIVATE_KEY` repository secrets.
+  The release job mints a short-lived token from it to open the changelog PR,
+  so that CI runs and Kodiak can merge it. A PR opened with the workflow's own
+  token never triggers CI, so the required `php` and `assets` checks would
+  never report and only someone who can bypass the ruleset could merge it.
+  The App needs no Contents permission: the branch and the CHANGELOG.md commit
+  are written with GITHUB_TOKEN so GitHub signs the commit. If minting the
+  token fails, the release job stops before the changelog step and the package
+  is not published to Private Packagist. Fix the App or its secrets and re-run
+  the job.
 - A Private Packagist package of type **Artifact**, not a VCS mirror. The two
   types cannot coexist for one package name.
 - Its **Trusted publisher**: owner `ItinerisLtd`, repository `wpc-builder`,
