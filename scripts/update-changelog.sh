@@ -27,10 +27,10 @@ fi
 # `--force` makes the call idempotent.
 #
 # Uses CHANGELOG_PR_TOKEN, not GITHUB_TOKEN: the label and the PR below need
-# a real account behind them so the PR triggers `on: pull_request` CI: a PR
-# opened with the workflow's own token never does. GITHUB_TOKEN stays the
-# default for every other call in this script so the CHANGELOG.md commit
-# comes from GitHub's own signed identity, not an unsigned personal PAT.
+# an identity other than the workflow's own so the PR triggers
+# `on: pull_request` CI: a PR opened with GITHUB_TOKEN never does. GITHUB_TOKEN
+# stays the default for every other call in this script so the CHANGELOG.md
+# commit comes from GitHub's own signed identity.
 GH_TOKEN="${CHANGELOG_PR_TOKEN:-${GITHUB_TOKEN}}" gh label create changelog \
   --repo "${REPO}" \
   --color 0e8a16 \
@@ -125,8 +125,8 @@ printf '%s' "${UPDATED_CONTENT}" \
   | gh api --method PUT "repos/${REPO}/contents/CHANGELOG.md" --input - \
     >/dev/null
 
-# Same reasoning as the label call above: a real account, not the workflow's
-# own token, so the PR triggers `on: pull_request` CI.
+# Same reasoning as the label call above: an identity other than the
+# workflow's own, so the PR triggers `on: pull_request` CI.
 GH_TOKEN="${CHANGELOG_PR_TOKEN:-${GITHUB_TOKEN}}" gh pr create \
   --repo "${REPO}" \
   --base "${BASE_BRANCH}" \
