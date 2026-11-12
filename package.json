@@ -26,7 +26,7 @@
     "@wordpress/env": "^12.1.0",
     "autoprefixer": "^10.6.2",
     "eslint": "^10.14.0",
-    "globals": "^17.13.0",
+    "globals": "^17.14.0",
     "jsdom": "^31.0.0",
     "postcss-nesting": "^14.0.2",
     "stylelint": "^17.16.0",
