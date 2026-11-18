@@ -8,6 +8,7 @@ use Itineris\WpcBuilder\Config;
 use Itineris\WpcBuilder\Customizer;
 use Itineris\WpcBuilder\Enums\OptionType;
 use Itineris\WpcBuilder\Tests\Fixtures\Panels\FooterPanelFixture;
+use Itineris\WpcBuilder\Tests\Fixtures\Sections\CountingSectionFixture;
 use Itineris\WpcBuilder\Tests\Fixtures\Sections\FooterSectionFixture;
 use Itineris\WpcBuilder\Tests\Fixtures\Sections\RequiredWhenFieldSectionFixture;
 use Itineris\WpcBuilder\Tests\Fixtures\Sections\SectionInPanelFixture;
@@ -105,6 +106,27 @@ it('hooks the control asset registrar onto customize_controls_enqueue_scripts', 
     expect(fn (): mixed => Customizer::make()
         ->addSections([FooterSectionFixture::class])
         ->register())->not->toThrow(Throwable::class);
+});
+
+it('does not build section fields until the Customizer enqueues its controls', function (): void {
+    CountingSectionFixture::$fieldsCalls = 0;
+    $capturedCallbacks = [];
+
+    Actions\expectAdded('customize_controls_enqueue_scripts')->times(4)->whenHappen(
+        function (callable $callback) use (&$capturedCallbacks): void {
+            $capturedCallbacks[] = $callback;
+        },
+    );
+
+    Customizer::make()
+        ->addSections([CountingSectionFixture::class])
+        ->register();
+
+    expect(CountingSectionFixture::$fieldsCalls)->toBe(0);
+
+    $capturedCallbacks[0]();
+
+    expect(CountingSectionFixture::$fieldsCalls)->toBe(1);
 });
 
 it('enqueues and localises the dependency script for a field with visible-when conditions', function (): void {

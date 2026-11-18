@@ -82,11 +82,12 @@ final class Customizer
 
     public function register(): void
     {
-        $panels = new PanelRegistrar($this->panels);
-        $sections = new SectionRegistrar($this->sections, $this->config);
-        $assets = new ControlAssetRegistrar($this->registeredControlClasses());
-
-        add_action('customize_controls_enqueue_scripts', [$assets, 'register']);
+        add_action(
+            'customize_controls_enqueue_scripts',
+            function (): void {
+                $this->enqueueControlAssets();
+            },
+        );
 
         add_action(
             'customize_controls_enqueue_scripts',
@@ -111,12 +112,21 @@ final class Customizer
 
         add_action(
             'customize_register',
-            function (WP_Customize_Manager $customizer) use ($panels, $sections): void {
-                $panels->register($customizer);
-                $sections->register($customizer);
+            function (WP_Customize_Manager $customizer): void {
+                new PanelRegistrar($this->panels)->register($customizer);
+                new SectionRegistrar($this->sections, $this->config)->register($customizer);
             },
             20,
         );
+    }
+
+    /**
+     * Built at enqueue time, not in register(), so section fields()
+     * only run when the Customizer actually loads.
+     */
+    private function enqueueControlAssets(): void
+    {
+        new ControlAssetRegistrar($this->registeredControlClasses())->register();
     }
 
     /**
