@@ -154,7 +154,7 @@ final class PostSelect extends Select
      * update_post_meta_cache are disabled below since choices only need
      * each post's id and title, not its terms or meta.
      *
-     * @return array<string, string>
+     * @return array<int, string>
      */
     private function queryChoices(): array
     {
@@ -171,10 +171,13 @@ final class PostSelect extends Select
             'fields' => 'all',
         ];
 
-        $posts = array_filter(new WP_Query($args)->posts, static fn (mixed $post): bool => $post instanceof WP_Post);
+        $posts = array_filter(
+            new WP_Query($args)->posts ?? [],
+            static fn (mixed $post): bool => $post instanceof WP_Post,
+        );
 
         return array_combine(
-            array_map(static fn (WP_Post $post): string => (string) $post->ID, $posts),
+            array_map(static fn (WP_Post $post): int => $post->ID, $posts),
             array_map(static fn (WP_Post $post): string => get_the_title($post), $posts),
         );
     }

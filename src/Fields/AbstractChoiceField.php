@@ -6,11 +6,11 @@ namespace Itineris\WpcBuilder\Fields;
 
 abstract class AbstractChoiceField extends AbstractField
 {
-    /** @var array<string, string> */
+    /** @var array<int|string, string> */
     protected array $choices = [];
 
     /**
-     * @param array<string, string> $choices
+     * @param array<int|string, string> $choices
      */
     final public function setChoices(array $choices): static
     {
@@ -28,7 +28,7 @@ abstract class AbstractChoiceField extends AbstractField
     }
 
     /**
-     * @return array<string, string>
+     * @return array<int|string, string>
      */
     public function choices(): array
     {
