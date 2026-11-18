@@ -7,9 +7,9 @@ namespace Itineris\WpcBuilder\Controls\Contracts;
 /**
  * @phpstan-type EnqueuedAsset array{
  *     type: 'style'|'script',
- *     handle: string,
+ *     handle: non-empty-string,
  *     src: string,
- *     dependencies?: array<string>,
+ *     dependencies?: array<non-empty-string>,
  *     version?: string|int|null,
  *     media?: string,
  *     args?: array<string, mixed>

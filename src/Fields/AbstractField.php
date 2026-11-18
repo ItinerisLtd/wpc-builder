@@ -387,7 +387,7 @@ abstract class AbstractField
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<int|string, mixed>
      */
     public function choices(): array
     {
