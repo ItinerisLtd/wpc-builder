@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
+use Brain\Monkey;
 use Brain\Monkey\Functions;
 use Itineris\WpcBuilder\Fields\PostSelect;
 use Itineris\WpcBuilder\Fields\Select;
 
 require_once __DIR__ . '/../../Fixtures/wp-post-double.php';
+
+beforeEach(function (): void {
+    Monkey\Functions\stubTranslationFunctions();
+});
 
 it('is a Select, so Repeater still recognises multiple-select sub-fields', function (): void {
     expect(PostSelect::make('featured'))->toBeInstanceOf(Select::class);
@@ -86,8 +91,9 @@ it('builds string-keyed id => title choices from the queried posts', function ()
     $args = PostSelect::make('featured')->buildControlArgs('footer');
 
     expect($args['choices'])->toBe([
-        '3' => 'Title 3',
-        '1' => 'Title 1',
+        0 => 'None',
+        3 => 'Title 3',
+        1 => 'Title 1',
     ]);
 });
 
@@ -101,7 +107,7 @@ it('drops any non-WP_Post entry a filtered query might return', function (): voi
 
     $args = PostSelect::make('featured')->buildControlArgs('footer');
 
-    expect($args['choices'])->toBe(['3' => 'Title 3']);
+    expect($args['choices'])->toBe([0 => 'None', 3 => 'Title 3']);
 });
 
 it('runs the query only once, even across repeated choices()/controlArgs() calls', function (): void {
@@ -117,7 +123,7 @@ it('runs the query only once, even across repeated choices()/controlArgs() calls
     $field->choices();
     $field->buildControlArgs('footer');
 
-    expect($field->choices())->toBe(['1' => 'Title']);
+    expect($field->choices())->toBe([0 => 'None', 1 => 'Title']);
 });
 
 it('is what Repeater reads directly via choices(), bypassing controlArgs()', function (): void {
@@ -128,5 +134,81 @@ it('is what Repeater reads directly via choices(), bypassing controlArgs()', fun
 
     Functions\when('get_the_title')->justReturn('Seven');
 
-    expect(PostSelect::make('featured')->choices())->toBe(['7' => 'Seven']);
+    expect(PostSelect::make('featured')->choices())->toBe([0 => 'None', 7 => 'Seven']);
+});
+
+it('prepends a none choice ahead of the queried posts by default', function (): void {
+    Mockery::mock('overload:' . WP_Query::class)
+        ->shouldReceive('__construct')
+        ->once()
+        ->andSet('posts', [new WP_Post(3)]);
+
+    Functions\when('get_the_title')->alias(static fn (WP_Post $post): string => "Title {$post->ID}");
+
+    $args = PostSelect::make('featured')->buildControlArgs('footer');
+
+    expect($args['choices'])->toBe([
+        0 => 'None',
+        3 => 'Title 3',
+    ]);
+});
+
+it('overrides the none label and value, and still yields it for an empty query', function (): void {
+    Mockery::mock('overload:' . WP_Query::class)
+        ->shouldReceive('__construct')
+        ->once()
+        ->andSet('posts', []);
+
+    $choices = PostSelect::make('featured')->setNoneChoice('Default template', 'default')->choices();
+
+    expect($choices)->toBe(['default' => 'Default template']);
+});
+
+it('omits the none choice for multiple selects', function (): void {
+    Mockery::mock('overload:' . WP_Query::class)
+        ->shouldReceive('__construct')
+        ->once()
+        ->andSet('posts', [new WP_Post(3)]);
+
+    Functions\when('get_the_title')->justReturn('Title');
+
+    $choices = PostSelect::make('featured')->setMultiple()->choices();
+
+    expect($choices)->toBe([3 => 'Title']);
+});
+
+it('rejects a positive integer none value, as it could match a post ID', function (string $value): void {
+    PostSelect::make('featured')->setNoneChoice('None', $value);
+})->with(['1', '42'])->throws(InvalidArgumentException::class);
+
+it('accepts zero and non-numeric none values', function (string $value): void {
+    expect(PostSelect::make('featured')->setNoneChoice('None', $value))->toBeInstanceOf(PostSelect::class);
+})->with(['0', 'default']);
+
+it('re-resolves choices when setMultiple() is called after they were resolved', function (): void {
+    Mockery::mock('overload:' . WP_Query::class)
+        ->shouldReceive('__construct')
+        ->atLeast()->once()
+        ->andSet('posts', [new WP_Post(3)]);
+
+    Functions\when('get_the_title')->justReturn('Title');
+
+    $field = PostSelect::make('featured');
+
+    expect($field->choices())->toBe([0 => 'None', 3 => 'Title']);
+
+    $field->setMultiple();
+
+    expect($field->choices())->toBe([3 => 'Title']);
+});
+
+it('drops the none choice with removeNoneChoice()', function (): void {
+    Mockery::mock('overload:' . WP_Query::class)
+        ->shouldReceive('__construct')
+        ->once()
+        ->andSet('posts', [new WP_Post(3)]);
+
+    Functions\when('get_the_title')->justReturn('Title');
+
+    expect(PostSelect::make('featured')->removeNoneChoice()->choices())->toBe([3 => 'Title']);
 });

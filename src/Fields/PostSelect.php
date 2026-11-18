@@ -4,17 +4,21 @@ declare(strict_types=1);
 
 namespace Itineris\WpcBuilder\Fields;
 
+use InvalidArgumentException;
 use WP_Post;
 use WP_Query;
 
 use function array_combine;
 use function array_filter;
 use function array_map;
+use function ctype_digit;
 use function get_the_title;
 
 /**
  * A Select field whose choices are posts of a given post type (or all
  * post types), queried directly rather than supplied via setChoices().
+ * A single select also offers `0 => 'None'` first, so a selection can be
+ * cleared (see setNoneChoice()/removeNoneChoice()).
  * Calling setChoices() manually has no lasting effect: it's overwritten
  * by the query results the first time choices()/controlArgs() runs.
  */
@@ -27,6 +31,12 @@ final class PostSelect extends Select
     private array $queryArgs = [];
 
     private bool $resolved = false;
+
+    private bool $noneEnabled = true;
+
+    private ?string $noneLabel = null;
+
+    private string $noneValue = '0';
 
     /**
      * @param string|array<int, string> $postType
@@ -50,6 +60,44 @@ final class PostSelect extends Select
     public function setQueryArgs(array $queryArgs): self
     {
         $this->queryArgs = $queryArgs;
+        $this->resolved = false;
+
+        return $this;
+    }
+
+    /**
+     * Overrides the label and value of the "nothing selected" choice,
+     * which every single-select PostSelect prepends as `0 => 'None'`.
+     * A positive integer `$value` is rejected, as it could match a post ID.
+     *
+     * @throws InvalidArgumentException When `$value` is a positive integer.
+     */
+    public function setNoneChoice(?string $label = null, string $value = '0'): self
+    {
+        if (ctype_digit($value) && (int) $value > 0) {
+            throw new InvalidArgumentException('The none value must not be a positive integer.');
+        }
+
+        $this->noneEnabled = true;
+        $this->noneLabel = $label;
+        $this->noneValue = $value;
+        $this->resolved = false;
+
+        return $this;
+    }
+
+    public function removeNoneChoice(): self
+    {
+        $this->noneEnabled = false;
+        $this->resolved = false;
+
+        return $this;
+    }
+
+    #[\Override]
+    public function setMultiple(bool $multiple = true): self
+    {
+        parent::setMultiple($multiple);
         $this->resolved = false;
 
         return $this;
@@ -87,7 +135,14 @@ final class PostSelect extends Select
 
         $this->resolved = true;
 
-        $this->setChoices($this->queryChoices());
+        $choices = $this->queryChoices();
+
+        if ($this->noneEnabled && ! $this->isMultiple()) {
+            $noneLabel = $this->noneLabel ?? __('None', 'wpc-builder');
+            $choices = [$this->noneValue => $noneLabel] + $choices;
+        }
+
+        $this->setChoices($choices);
     }
 
     /**
