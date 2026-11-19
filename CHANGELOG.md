@@ -3,6 +3,23 @@
 All notable changes to this project are documented in this file.
 See [docs/releasing.md](docs/releasing.md).
 
+## [0.4.0](https://github.com/ItinerisLtd/wpc-builder/compare/v0.3.2...0.4.0) (2026-11-19)
+
+
+### Features
+
+* **post-select:** offer a none choice by default ([#118](https://github.com/ItinerisLtd/wpc-builder/issues/118)) ([3c7e020](https://github.com/ItinerisLtd/wpc-builder/commit/3c7e020b28bcf08d9fcd3f6a39032ad2660b715a))
+
+
+### Bug Fixes
+
+* **ci:** install a Compose release with bake entitlement grants ([#119](https://github.com/ItinerisLtd/wpc-builder/issues/119)) ([d854f7a](https://github.com/ItinerisLtd/wpc-builder/commit/d854f7a4545d854c4329d08b24d5e22dd0315cd2))
+
+
+### Performance Improvements
+
+* **customizer:** build registrars and section fields only inside their hook callbacks ([#124](https://github.com/ItinerisLtd/wpc-builder/issues/124)) ([0463a52](https://github.com/ItinerisLtd/wpc-builder/commit/0463a52e06aad0fcaa2fc0a4ce6a5c6eff559470))
+
 ## [0.3.2] - 2026-09-29
 
 ### What's Changed
