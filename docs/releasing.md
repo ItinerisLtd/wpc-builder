@@ -3,48 +3,49 @@
 Maintainer notes. Consuming the package needs none of this, just
 `composer require itinerisltd/wpc-builder`.
 
+Releases are driven by [release-please](https://github.com/googleapis/release-please)
+from conventional commits on `main`. Tags are unprefixed (`1.2.3`).
+
 ## Cutting a release
 
-1. Create a GitHub Release on `main`, tagged `v1.2.3`, `v1.2.3-beta1` or
-   `v1.2.3-RC1`. Write the release notes: they become the `CHANGELOG.md`
-   entry verbatim.
-2. The `release` workflow builds the zip, attaches it to the release, and
-   opens a `chore/changelog-<tag>` PR.
-3. Approve the `packagist` deployment in the Actions tab. Nothing reaches
+1. Merge work to `main`. release-please keeps a `chore(release): <version>`
+   pull request open, with the next version and the `CHANGELOG.md` entry
+   generated from the commits.
+2. Merge that pull request by hand when you want to release. Kodiak does not
+   merge it.
+3. The `release` workflow creates the draft release and tag, builds the zip,
+   attaches it, and publishes the release.
+4. Approve the `packagist` deployment in the Actions tab. Nothing reaches
    Private Packagist until you do, and GitHub cancels a run left unapproved
    for 30 days.
-4. Nothing to do for the changelog PR: Kodiak approves and merges it once CI
-   passes.
 
-A tag outside those forms, or a release with no notes, fails the workflow
-before anything is built or published.
+## Pre-releases
+
+Create a GitHub Release by hand, tagged `1.2.3-beta1` or `1.2.3-RC1`, and tick
+"Set as a pre-release". The same workflow builds, attaches and publishes it to
+Private Packagist after the same approval. A tag outside the documented forms
+fails the workflow before anything is built.
+A stable release created by hand is not built or published; stable releases come
+only from the release pull request.
 
 ## If a step fails
 
-Fix the cause and re-run the job. Nothing is created before the checks, so a
-re-run is clean. To run the changelog step by hand:
-
-```bash
-GITHUB_REPOSITORY=ItinerisLtd/wpc-builder bash scripts/update-changelog.sh v1.2.3
-```
+Fix the cause and re-run the failed jobs. A full re-run does nothing once the
+draft release exists, so to build and publish a tag again, run the `Release
+package` workflow manually (Actions, Run workflow) with the tag, for example
+`1.2.3`.
 
 ## One-time setup
 
 Already done, recorded in case it ever needs rebuilding. Publishing itself
 needs no secrets; it uses Trusted Publishing over GitHub OIDC.
 
-- The `itineris-changelog` GitHub App, installed on this repository only, with
-  Pull requests and Issues write access. Its Client ID and private key are the
-  `CHANGELOG_BOT_CLIENT_ID` and `CHANGELOG_BOT_PRIVATE_KEY` repository secrets.
-  The release job mints a short-lived token from it to open the changelog PR,
-  so that CI runs and Kodiak can merge it. A PR opened with the workflow's own
-  token never triggers CI, so the required `php` and `assets` checks would
-  never report and only someone who can bypass the ruleset could merge it.
-  The App needs no Contents permission: the branch and the CHANGELOG.md commit
-  are written with GITHUB_TOKEN so GitHub signs the commit. If minting the
-  token fails, the release job stops before the changelog step and the package
-  is not published to Private Packagist. Fix the App or its secrets and re-run
-  the job.
+- The `itineris-releaser` GitHub App, installed on this repository, with the
+  `RELEASE_BOT_CLIENT_ID` variable and `RELEASE_BOT_PRIVATE_KEY` secret (both
+  set at organisation level). release-please uses a token minted from it to
+  open the release pull request, so that CI runs on it. A pull request opened
+  with the workflow's own token never triggers CI, so the required `php` and
+  `assets` checks would never report.
 - A Private Packagist package of type **Artifact**, not a VCS mirror. The two
   types cannot coexist for one package name.
 - Its **Trusted publisher**: owner `ItinerisLtd`, repository `wpc-builder`,
@@ -53,5 +54,5 @@ needs no secrets; it uses Trusted Publishing over GitHub OIDC.
   `environment:` key on the workflow's `publish` job. The OIDC subject claim
   includes the environment name, so change both sides together or publishing
   stops matching.
-- `.github/workflows/release.yml` must be on `main` for `release` events to
-  trigger it.
+- `.github/workflows/release.yml` must be on `main` for the `push` and
+  `release` events to trigger it.

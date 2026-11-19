@@ -1,7 +1,7 @@
 version = 1
 
 [merge]
-automerge_label = ["dependencies", "changelog"]
+automerge_label = ["dependencies"]
 # main requires signed commits. GitHub signs the commit it creates for a
 # squash merge; a rebase merge replays the branch commits unsigned.
 method = "squash"
@@ -12,4 +12,4 @@ usernames = ["dependabot"]
 
 [approve]
 auto_approve_usernames = ["dependabot"]
-auto_approve_labels = ["dependencies", "changelog"]
+auto_approve_labels = ["dependencies"]
