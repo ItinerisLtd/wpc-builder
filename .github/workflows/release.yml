@@ -1,78 +1,97 @@
+# yamllint disable-line rule:document-start
 name: Release package
 
+# yamllint disable-line rule:truthy
 on:
+  push:
+    branches:
+      - main
   release:
     types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to build and publish again, such as 0.4.0.
+        required: true
+
+permissions:
+  contents: read
 
 jobs:
+  release-please:
+    if: ${{ github.event_name == 'push' }}
+    runs-on: ubuntu-latest
+    concurrency:
+      group: release-please
+      cancel-in-progress: false
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        id: app-token
+        with:
+          client-id: ${{ vars.RELEASE_BOT_CLIENT_ID }}
+          private-key: ${{ secrets.RELEASE_BOT_PRIVATE_KEY }}
+
+      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        id: release
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
   package:
+    needs: release-please
+    if: >-
+      ${{ always() && (
+        needs.release-please.outputs.release_created == 'true'
+        || github.event_name == 'workflow_dispatch'
+        || (github.event_name == 'release' && github.event.release.prerelease)
+      ) }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      issues: write
-      pull-requests: write
+    env:
+      TAG_NAME: ${{ needs.release-please.outputs.tag_name || inputs.tag || github.event.release.tag_name }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ env.TAG_NAME }}
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7
         with:
           node-version: "24"
           cache: "npm"
       - name: Validate release tag
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: bash scripts/assert-semver-tag.sh "${RELEASE_TAG}"
-      - name: Validate release notes
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: bash scripts/assert-release-notes.sh "${RELEASE_TAG}"
+        run: bash scripts/assert-semver-tag.sh "${TAG_NAME}"
       - name: Build release package
+        run: bash scripts/build-release-asset.sh "${TAG_NAME}"
+      - name: Upload release package and publish
         env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: bash scripts/build-release-asset.sh "${RELEASE_TAG}"
-      - name: Upload release package
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: gh release upload "${RELEASE_TAG}" build/*.zip --clobber
-      - name: Generate changelog PR token
-        id: changelog-token
-        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
-        with:
-          client-id: ${{ secrets.CHANGELOG_BOT_CLIENT_ID }}
-          private-key: ${{ secrets.CHANGELOG_BOT_PRIVATE_KEY }}
-          permission-issues: write
-          permission-pull-requests: write
-      - name: Update CHANGELOG.md
-        env:
-          # GITHUB_TOKEN writes the branch and the CHANGELOG.md commit, which
-          # GitHub only auto-signs for its own token. A required_signatures
-          # ruleset would reject the commit otherwise.
-          GITHUB_TOKEN: ${{ github.token }}
-          # A pull request opened with the workflow's own token never triggers
-          # `on: pull_request`, so CI would not run and Kodiak could not merge.
-          # The itineris-changelog App token opens it instead, so its required
-          # checks report and Kodiak approves and merges it.
-          CHANGELOG_PR_TOKEN: ${{ steps.changelog-token.outputs.token }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: bash scripts/update-changelog.sh "${RELEASE_TAG}"
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${TAG_NAME}" build/*.zip --clobber --repo "${GITHUB_REPOSITORY}"
+          gh release edit "${TAG_NAME}" --draft=false --repo "${GITHUB_REPOSITORY}"
 
   publish:
-    needs: package
+    needs: [release-please, package]
+    if: ${{ always() && needs.package.result == 'success' }}
     runs-on: ubuntu-latest
     environment: packagist
     permissions:
       id-token: write
       contents: read
+    env:
+      TAG_NAME: ${{ needs.release-please.outputs.tag_name || inputs.tag || github.event.release.tag_name }}
     steps:
       - name: Download release package
         env:
           GITHUB_TOKEN: ${{ github.token }}
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-        run: gh release download "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" --pattern '*.zip' --dir build
+        run: gh release download "${TAG_NAME}" --repo "${GITHUB_REPOSITORY}" --pattern '*.zip' --dir build
       - name: Upload package artifact to Private Packagist
         uses: packagist/artifact-publish-github-action@187f3c3bdde9cfa570108893f243d515875cc5bb # v1.0.2
         with:
           package_name: itinerisltd/wpc-builder
           organization_url_name: itinerisltd
-          artifact: ${{ github.workspace }}/build/wpc-builder-${{ github.event.release.tag_name }}.zip
+          artifact: ${{ github.workspace }}/build/wpc-builder-${{ env.TAG_NAME }}.zip
